@@ -1,0 +1,309 @@
+<!doctype html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Film Log</title><style>@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap');:root{--o:#ff5a1f}*{box-sizing:border-box}body{margin:0;background:#0b0b0b;color:#fff;font-family:'Prompt',sans-serif}.hero{min-height:450px;padding:28px 7vw 35px;background:radial-gradient(circle at 72% 44%,#ff7b36,#e83a1c 26%,#792017 58%,#41170f);position:relative;overflow:hidden;border-radius:0 0 58px 58px}.hero:after{content:'';position:absolute;width:390px;height:390px;border:1px solid #fff3;border-radius:50%;right:-100px;bottom:-210px}.nav,.body{position:relative;z-index:1}.nav{display:flex;justify-content:space-between;align-items:center;font-size:12px}.logo{font-size:17px;font-weight:700}.nav button,.cta{border:0;border-radius:99px;background:#fff;color:#171717;padding:10px 16px;font:bold 11px 'Prompt';cursor:pointer}.body{padding-top:75px}.body small,.orange{font-weight:700;color:var(--o)}.body h1{font-size:clamp(48px,7vw,85px);letter-spacing:-4px;line-height:.9;margin:12px 0}.body p{max-width:460px;color:#ffe0d6;font-size:14px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-top:34px}.stat b{display:block;font:700 25px 'Prompt'}.stat span{font-size:11px;color:#ffd5c5}.main{background:#0b0b0b;display:grid;grid-template-columns:1fr 1.1fr;gap:45px;padding:82px 7vw 55px;min-height:570px}.main h2{font-size:clamp(36px,5vw,58px);letter-spacing:-2px;line-height:1;margin:12px 0}.main p{color:#bbb;line-height:1.6}.wide{background:var(--o);color:#fff;margin-top:14px}.orange{font-size:12px}.line{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid #353535}.line b{color:var(--o);font:13px 'Prompt'}.recent{margin-top:26px}.record,.empty{padding:16px 18px;border-radius:14px;margin-top:10px;background:#f1eeea;color:#1c1c1c;display:grid;grid-template-columns:1.3fr .9fr .4fr;gap:12px;font-size:13px}.record small{display:block;color:#777;font:10px 'Prompt';margin-top:5px}.empty{display:block;background:#1a1a1a;color:#aaa}dialog{border:0;width:min(550px,92vw);padding:0;background:#f4f1eb;color:#171717}dialog::backdrop{background:#000c}.modal{padding:25px}.head{display:flex;justify-content:space-between}.head h2{margin:0;font-size:28px}.close{border:0;background:none;font-size:28px;cursor:pointer}.form{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:18px}label,.label{font-size:11px;font-weight:700;color:#666}input,select{display:block;width:100%;margin-top:6px;padding:10px;border:1px solid #d3d0c8;background:#fff;font:14px 'DM Sans'}.full{grid-column:1/-1}.stars{display:flex;gap:6px}.stars input{position:absolute;opacity:0}.stars label{font-size:28px;color:#bbb;cursor:pointer}.stars label.on{color:var(--o)}.radios{display:flex;gap:8px}.radios label{padding:9px;border:1px solid #ddd;background:#fff;color:#222}.radios input{display:inline;width:auto;margin:0 4px 0 0}.poster{display:none}.poster.show{display:block}.save{grid-column:1/-1;border:0;background:var(--o);color:#fff;padding:14px;font-weight:700;cursor:pointer}@media(max-width:650px){.hero{padding:22px 24px}.stats,.form{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr;padding:55px 24px}.record{grid-template-columns:1fr 1fr}}</style></head><body><section class="hero"><nav class="nav"><div class="logo"><img src="logoo.png" alt="Film Log"></div><button id="add1">＋ เพิ่มหนัง</button></nav><div class="body"><small style="color:#ffe0d6">MY MOVIE RECORD</small><h1 id="latestTitle">หนังที่ดูล่าสุด</h1><div class="latest-card" id="latestInfo">บันทึกหนังเรื่องแรกเพื่อแสดงรายละเอียดตรงนี้</div><button id="add2" class="cta">เพิ่มบันทึกหนังที่ดู →</button><div class="stats"><div class="stat"><b id="y">0</b><span>เรื่องที่ดูปีนี้</span></div><div class="stat"><b id="all">0</b><span>เรื่องที่ดูทั้งหมด</span></div><div class="stat"><b id="p">0</b><span>โปสเตอร์สะสม</span></div></div></div></section><section class="main"><div><div class="orange">COLLECTED POSTERS</div><h2>เก็บทุกความ<br>ทรงจำบนจอ</h2><p>สรุปโปสเตอร์ที่ได้รับ แยกตามระบบฉาย</p><button id="addPoster" class="cta wide">＋ เพิ่มโปสเตอร์ใหม่</button></div><div><div id="formats"></div><div class="recent"><div class="history-title"><div class="orange">RECENTLY WATCHED</div><button class="history-open" data-history="movies">ดูทั้งหมด →</button></div><div id="records"></div></div><div class="recent poster-recent"><div class="history-title"><div class="orange">NEWLY RECEIVED POSTERS</div><button class="history-open" data-history="posters">ดูทั้งหมด →</button></div><div id="posterRecords"></div></div></div></section><dialog id="d"><div class="modal"><div class="head"><div><small class="movie-kicker">NEW MOVIE</small><h2>เพิ่มหนังที่ดู</h2></div><button id="x" class="close">×</button></div><form id="f" class="form"><label class="full">ชื่อหนัง<input name="title" required></label><label>วันที่ดู<input type="date" name="date" required></label><label>รอบหนัง<input type="time" name="showtime" required></label><label class="full">ระบบที่ดู<select name="format"><option>Digital 2D</option><option>IMAX</option><option>ScreenX</option><option>4DX</option><option>Dolby VISION + ATMOS</option></select></label><div class="full"><div class="label">ให้คะแนน</div><div id="stars" class="stars"><input id="s1" name="rating" type="radio" value="1"><label for="s1">★</label><input id="s2" name="rating" type="radio" value="2"><label for="s2">★</label><input id="s3" name="rating" type="radio" value="3"><label for="s3">★</label><input id="s4" name="rating" type="radio" value="4"><label for="s4">★</label><input id="s5" name="rating" type="radio" value="5" checked><label for="s5">★</label></div></div><div class="full"><div class="label">ได้รับโปสเตอร์หรือไม่</div><div class="radios"><label><input type="radio" name="hasPoster" value="no" checked> ไม่ได้รับ</label><label><input type="radio" name="hasPoster" value="yes"> ได้รับ</label></div></div><div id="pf" class="poster full">โปสเตอร์จะนับตาม “ระบบที่ดู” โดยอัตโนมัติ</div><button class="save">บันทึกข้อมูล</button></form></div></dialog><script>const K='film-log-red-v3',S=['Digital 2D','IMAX','ScreenX','4DX','Dolby VISION + ATMOS'],$=x=>document.querySelector(x);let a=[],posterData=[];try{a=JSON.parse(localStorage.getItem(K)||'[]');posterData=JSON.parse(localStorage.getItem('film-poster-records-v1')||'[]')}catch{}a.forEach((m,i)=>{if(m.hasPoster==='yes'&&!m.posterId){let linked=posterData.find(p=>!p.source&&p.title===m.title&&p.date===m.date&&p.format===m.format);if(linked){m.posterId='legacy-movie-'+i;linked.posterId=m.posterId;linked.source='movie'}}});localStorage.setItem(K,JSON.stringify(a));localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));function q(n){document.querySelectorAll('#stars label').forEach((x,i)=>x.classList.toggle('on',i<n))}function r(){let latest=a[0];if(latest){$('#latestTitle').textContent=latest.title;$('#latestInfo').innerHTML=`<span>รอบ ${latest.showtime}</span><span>${latest.format}</span><span class="latest-stars">${'★'.repeat(latest.rating)}${'☆'.repeat(5-latest.rating)}</span>`}else{$('#latestTitle').textContent='หนังที่ดูล่าสุด';$('#latestInfo').textContent='บันทึกหนังเรื่องแรกเพื่อแสดงรายละเอียดตรงนี้'}let n=new Date().getFullYear(),p=posterData;$('#y').textContent=a.filter(x=>x.date?.startsWith(n+'-')).length;$('#all').textContent=a.length;$('#p').textContent=p.length;$('#formats').innerHTML=S.map(s=>`<div class="line"><span>${s}</span><b>${p.filter(x=>x.format===s).length} ใบ</b></div>`).join('');$('#records').innerHTML=a.length?a.slice(0,2).map((x,i)=>`<div class="record"><div><b>${x.title}</b><small>${x.date} · ${x.showtime}</small></div><div>${x.format}<small>${x.hasPoster==='yes'?'โปสเตอร์ '+x.posterFormat:'ไม่มีโปสเตอร์'}</small></div><div class="record-actions"><span>${'★'.repeat(x.rating)}</span><button class="delete" data-index="${i}" aria-label="ลบ ${x.title}">ลบ</button></div></div>`).join(''):'<div class="empty">รายการหนังที่คุณบันทึกจะปรากฏตรงนี้</div>'}function o(){$('#d').showModal()}function removeEntry(i){let movie=a[i];if(movie?.posterId){posterData=posterData.filter(p=>p.posterId!==movie.posterId);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData))}a.splice(i,1);localStorage.setItem(K,JSON.stringify(a));r()}r();q(5);['#add1','#add2'].forEach(x=>$(x).onclick=o);$('body').addEventListener('click',e=>{let b=e.target.closest('.delete');if(b)removeEntry(+b.dataset.index)});$('#x').onclick=()=>$('#d').close();document.querySelectorAll('[name=rating]').forEach(x=>x.onchange=()=>q(+x.value));document.querySelectorAll('[name=hasPoster]').forEach(x=>x.onchange=()=>{});$('#f').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));if(d.hasPoster==='yes'){d.posterId='movie-'+Date.now()+'-'+Math.random().toString(36).slice(2,8);posterData.unshift({format:d.format,date:d.date,title:d.title,posterId:d.posterId,source:'movie'});localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData))}d.posterFormat='';a.unshift(d);localStorage.setItem(K,JSON.stringify(a));e.target.reset();$('#s5').checked=true;q(5);$('#d').close();r()}</script></body></html><style>dialog{background:#111;color:#fff;border:1px solid #ff5a1f;box-shadow:0 25px 70px #000}dialog::backdrop{background:#000d}.modal{background:linear-gradient(135deg,#8a2716,#26110e 58%,#111);padding:28px}.head{padding-bottom:17px;border-bottom:1px solid #ffffff35}.head h2{color:#fff}.close{color:#fff}.form{margin-top:20px}label,.label{color:#ffd9cb}input,select{background:#151515;border:1px solid #ffffff45;color:#fff;border-radius:0}.radios label{background:#151515;color:#fff;border-color:#ffffff45}.stars label{color:#7c6259}.stars label.on{color:#ff7a45}.poster{padding:12px;background:#0005}.save{border-radius:99px;background:#fff;color:#21100c}.save:hover{background:#ff5a1f;color:#fff}</style>
+
+
+
+<style>.latest-card{display:flex;gap:10px;flex-wrap:wrap;max-width:520px;margin:12px 0 15px;padding:13px 15px;border:1px solid #ffffff77;border-radius:14px;background:#0000001c;color:#fff;font-size:13px}.latest-card span{padding-right:10px;border-right:1px solid #ffffff55}.latest-card span:last-child{border:0}.latest-stars{color:#fff}.record-actions{display:flex;flex-direction:column;align-items:flex-start;gap:7px;color:var(--o)}.delete{border:1px solid #ff5a1f;background:transparent;color:#cf4520;border-radius:99px;padding:4px 9px;font:700 10px Prompt,sans-serif;cursor:pointer}.delete:hover{background:#ff5a1f;color:#fff}</style>
+
+
+<style>dialog{border:1px solid #ffffff55!important;border-radius:24px!important;background:#101010b8!important;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 28px 80px #000b!important;overflow:hidden}.modal{background:linear-gradient(145deg,#ff5a1f40,#101010cc 45%,#000000d9)!important;padding:30px!important}.head{border-bottom:1px solid #ffffff35;padding-bottom:17px}.head h2,.close{color:#fff!important}input,select{border-radius:11px!important;background:#00000066!important;border-color:#ffffff55!important}.radios label{border-radius:11px!important;background:#00000055!important}.poster{border-radius:12px;background:#00000055;padding:12px}.save{border-radius:99px!important}</style>
+
+
+<style>#latestTitle,.main h2{letter-spacing:.025em!important}</style>
+
+
+
+
+
+<style>.stats{grid-template-columns:repeat(3,1fr)!important}@media(max-width:650px){.stats{grid-template-columns:1fr 1fr!important}}</style>
+
+
+<dialog id="posterDialog"><div class="poster-modal"><div class="poster-head"><div><small>POSTER COLLECTION</small><h2>เพิ่มโปสเตอร์ใหม่</h2></div><button id="posterClose" class="close">×</button></div><form id="posterForm" class="poster-form"><label>โปสเตอร์ในระบบอะไร<select name="format" required><option>Digital 2D</option><option>IMAX</option><option>ScreenX</option><option>4DX</option><option>Dolby VISION + ATMOS</option></select></label><label>วันที่ได้รับ<input name="date" type="date" required></label><label class="poster-full">ชื่อหนัง (ไม่บังคับ)<input name="title" placeholder="ใช้เพื่ออ้างอิงในภายหลัง"></label><button class="poster-save">บันทึกโปสเตอร์</button></form></div></dialog>
+<style>#posterDialog{border:1px solid #ffffff55;border-radius:24px;background:#101010b8;color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);width:min(500px,92vw);box-shadow:0 28px 80px #000b}#posterDialog::backdrop{background:#000d}.poster-modal{padding:29px;background:linear-gradient(145deg,#ff5a1f40,#101010cc 45%,#000000d9)}.poster-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:17px;border-bottom:1px solid #ffffff35}.poster-head small{color:#ffb49a;font:11px Prompt,sans-serif;letter-spacing:.08em}.poster-head h2{margin:5px 0 0;font:700 27px Prompt,sans-serif}.poster-head .close{color:#fff}.poster-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.poster-form label{color:#ffd9cb}.poster-form input,.poster-form select{background:#00000066;border:1px solid #ffffff55;border-radius:11px;color:#fff}.poster-full{grid-column:1/-1}.poster-save{grid-column:1/-1;border:0;border-radius:99px;padding:14px;background:#fff;color:#21100c;font:700 13px Prompt,sans-serif;cursor:pointer}.poster-save:hover{background:#ff5a1f;color:#fff}@media(max-width:500px){.poster-form{grid-template-columns:1fr}}</style>
+<script>document.querySelector('#addPoster').onclick=()=>document.querySelector('#posterDialog').showModal();document.querySelector('#posterClose').onclick=()=>document.querySelector('#posterDialog').close();document.querySelector('#posterForm').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));d.source='manual';posterData.unshift(d);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));e.target.reset();document.querySelector('#posterDialog').close();r()}</script>
+
+
+<style>#d{background:#080808!important;border:1px solid #ffffff55!important;border-radius:24px!important;color:#fff!important;box-shadow:0 28px 80px #000c!important}#d .modal{background:#080808!important}#d .head{border-bottom:1px solid #ffffff35!important}#d .movie-kicker{display:block;color:#ff5a1f!important;font:700 11px Prompt,sans-serif!important;letter-spacing:.1em;margin-bottom:5px}#d .head h2{color:#fff!important}#d label,#d .label{color:#ffb49a!important}#d input,#d select{background:#151515!important;color:#fff!important;border-color:#ffffff50!important}#d .radios label{background:#151515!important;color:#fff!important}</style>
+
+
+<style>#d label,#d .label{color:#fff!important}#d .stars label{color:#ff5a1f!important}#d .stars label:not(.on){color:#7c6259!important}#posterDialog{background:#080808!important}#posterDialog .poster-modal{background:#080808!important}#posterDialog .poster-head small,#posterDialog .poster-head h2,#posterDialog label{color:#fff!important}#posterDialog input,#posterDialog select{background:#151515!important;color:#fff!important;border-color:#ffffff50!important}</style>
+
+
+<style>#posterDialog .poster-head small{color:#ff5a1f!important}</style>
+
+
+<style>#posterDialog .poster-head small{display:block;font:700 11px Prompt,sans-serif!important;letter-spacing:.1em!important;margin-bottom:5px!important;color:#ff5a1f!important}</style>
+
+
+
+<style>#d #pf{display:none!important}</style>
+
+
+<dialog id="historyDialog"><div class="history-modal"><div class="history-head"><div><small id="historyKicker">FULL HISTORY</small><h2 id="historyHeading">ประวัติทั้งหมด</h2></div><button id="historyClose" class="close">×</button></div><div id="historyList" class="history-list"></div></div></dialog>
+<style>.history-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:2px}.history-open{border:0;background:transparent;color:#ff8b61;font:700 10px Prompt,sans-serif;cursor:pointer;padding:4px 0}.history-open:hover{color:#fff}.poster-recent{border-top:1px solid #333;padding-top:22px}.poster-record .record-actions{align-items:flex-end}.poster-record{grid-template-columns:1.3fr .9fr .4fr!important}.poster-delete{border:1px solid #ff5a1f;background:transparent;color:#cf4520;border-radius:99px;padding:4px 9px;font:700 10px Prompt,sans-serif;cursor:pointer}.poster-delete:hover{background:#ff5a1f;color:#fff}#historyDialog{width:min(760px,94vw);max-height:82vh;border:1px solid #ffffff55;border-radius:24px;background:#080808;color:#fff;box-shadow:0 28px 80px #000c}#historyDialog::backdrop{background:#000d}.history-modal{padding:28px;background:#080808}.history-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #ffffff35;padding-bottom:17px}.history-head small{color:#ff5a1f;font:700 11px Prompt,sans-serif;letter-spacing:.1em}.history-head h2{margin:5px 0 0;font:700 27px Prompt,sans-serif}.history-head .close{color:#fff}.history-list{padding-top:11px}.history-list .record{margin-top:10px}@media(max-width:650px){.poster-record{grid-template-columns:1fr 1fr!important}}</style>
+<script>
+const originalRender=r;let activeHistory='movies';
+r=function(){originalRender();let target=document.querySelector('#posterRecords');if(target){let manualPosters=posterData.filter(x=>x.source!=='movie');target.innerHTML=manualPosters.length?manualPosters.slice(0,2).map(x=>`<div class="record poster-record"><div><b>${x.title||'โปสเตอร์สะสม'}</b><small>${x.date||'ไม่ระบุวันที่'}</small></div><div>${x.format}</div><div class="record-actions"><button class="poster-delete" data-poster-index="${posterData.indexOf(x)}">ลบ</button></div></div>`).join(''):'<div class="empty">รายการโปสเตอร์ที่เพิ่มจะปรากฏตรงนี้</div>'}}
+function renderHistory(){let isMovie=activeHistory==='movies',list=isMovie?a:posterData.filter(x=>x.source!=='movie');document.querySelector('#historyKicker').textContent=isMovie?'MOVIE HISTORY':'POSTER HISTORY';document.querySelector('#historyHeading').textContent=isMovie?'ประวัติหนังที่ดูทั้งหมด':'ประวัติโปสเตอร์ทั้งหมด';document.querySelector('#historyList').innerHTML=list.length?list.map((x,i)=>isMovie?`<div class="record"><div><b>${x.title}</b><small>${x.date} · ${x.showtime}</small></div><div>${x.format}<small>${x.hasPoster==='yes'?'ได้รับโปสเตอร์':'ไม่มีโปสเตอร์'}</small></div><div class="record-actions"><span style="color:var(--o)">${'★'.repeat(x.rating)}</span><button class="delete" data-index="${i}">ลบ</button></div></div>`:`<div class="record poster-record"><div><b>${x.title||'โปสเตอร์สะสม'}</b><small>${x.date||'ไม่ระบุวันที่'}</small></div><div>${x.format}</div><div class="record-actions"><button class="poster-delete" data-poster-index="${i}">ลบ</button></div></div>`).join(''):'<div class="empty">ยังไม่มีข้อมูล</div>'}
+document.body.addEventListener('click',e=>{let open=e.target.closest('.history-open'),del=e.target.closest('.poster-delete');if(open){activeHistory=open.dataset.history;renderHistory();document.querySelector('#historyDialog').showModal()}if(del){posterData.splice(+del.dataset.posterIndex,1);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));r();if(document.querySelector('#historyDialog').open)renderHistory()}});
+document.querySelector('#historyClose').onclick=()=>document.querySelector('#historyDialog').close();r();
+</script>
+
+
+<script>document.body.addEventListener("click",e=>{if(e.target.closest(".delete")&&document.querySelector("#historyDialog").open)setTimeout(renderHistory,0)})</script>
+
+
+
+
+
+<style>
+.hero{isolation:isolate}.tmdb-poster{position:absolute;inset:0;z-index:0;background:center 28%/cover no-repeat;opacity:.42;mask-image:linear-gradient(90deg,transparent 23%,#000 100%);-webkit-mask-image:linear-gradient(90deg,transparent 23%,#000 100%);pointer-events:none}.tmdb-poster:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#5f1b12 0%,#5f1b1266 52%,#41170f55 100%)}.movie-search{position:relative}.movie-suggestions{position:absolute;z-index:10;left:0;right:0;top:100%;margin-top:5px;max-height:230px;overflow:auto;border:1px solid #ffffff4d;border-radius:12px;background:#0c0c0cf2;box-shadow:0 14px 30px #000a}.movie-suggestion{display:flex;gap:10px;width:100%;border:0;border-bottom:1px solid #ffffff18;background:none;color:#fff;padding:9px;text-align:left;cursor:pointer;font:12px Prompt,sans-serif}.movie-suggestion:hover{background:#ff5a1f33}.movie-suggestion img{width:28px;height:40px;border-radius:4px;object-fit:cover;background:#292929}.movie-suggestion small{display:block;color:#aaa;margin-top:3px}.tmdb-credit{font-size:9px;color:#ffffffa8;margin:15px 0 0}.tmdb-credit a{color:#fff}
+</style>
+<script>
+(() => {
+  const TMDB_API_KEY = '5f290fddbe46b3517c024d444e4eb3bb';
+  const form = document.querySelector('#f');
+  const titleInput = form?.querySelector('[name="title"]');
+  if (!form || !titleInput) return;
+
+  const titleLabel = titleInput.closest('label');
+  titleLabel.classList.add('movie-search');
+  const chosen = document.createElement('input');
+  chosen.type = 'hidden'; chosen.name = 'tmdbPoster';
+  form.appendChild(chosen);
+  const chosenBackdrop = document.createElement('input');
+  chosenBackdrop.type = 'hidden'; chosenBackdrop.name = 'tmdbBackdrop';
+  form.appendChild(chosenBackdrop);
+  const suggestions = document.createElement('div');
+  suggestions.className = 'movie-suggestions';
+  suggestions.hidden = true;
+  titleLabel.appendChild(suggestions);
+
+  let picked = null, timer;
+  const esc = value => String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const image = path => path ? 'https://image.tmdb.org/t/p/original' + path : '';
+  const backdrop = path => path ? 'https://image.tmdb.org/t/p/original' + path : '';
+
+  async function searchMovies(query) {
+    try {
+      const url = 'https://api.themoviedb.org/3/search/movie?api_key=' + encodeURIComponent(TMDB_API_KEY) + '&query=' + encodeURIComponent(query) + '&language=en-US';
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('TMDB request failed');
+      const payload = await response.json();
+      const movies = (payload.results || []).slice(0, 6);
+      suggestions.innerHTML = movies.map((movie, index) => '<button type="button" class="movie-suggestion" data-index="' + index + '">' +
+        (movie.poster_path ? '<img src="' + image(movie.poster_path) + '" alt="">' : '<span style="width:28px;height:40px;background:#292929;border-radius:4px"></span>') +
+        '<span><b>' + esc(movie.title) + '</b><small>' + esc((movie.release_date || '').slice(0,4) || 'ไม่ระบุปี') + '</small></span></button>').join('');
+      suggestions.hidden = !movies.length;
+      suggestions._movies = movies;
+    } catch { suggestions.hidden = true; }
+  }
+
+  titleInput.addEventListener('input', () => {
+    picked = null; chosen.value = ''; chosenBackdrop.value = '';
+    const query = titleInput.value.trim();
+    clearTimeout(timer);
+    if (query.length < 2) { suggestions.hidden = true; return; }
+    timer = setTimeout(() => searchMovies(query), 280);
+  });
+
+  suggestions.addEventListener('click', event => {
+    const button = event.target.closest('.movie-suggestion');
+    if (!button) return;
+    picked = suggestions._movies[Number(button.dataset.index)];
+    titleInput.value = picked.title;
+    chosen.value = picked.poster_path ? image(picked.poster_path) : '';
+    chosenBackdrop.value = picked.backdrop_path ? backdrop(picked.backdrop_path) : '';
+    suggestions.hidden = true;
+  });
+
+  document.addEventListener('click', event => {
+    if (!titleLabel.contains(event.target)) suggestions.hidden = true;
+  });
+
+  form.addEventListener('submit', () => {
+    if (picked && titleInput.value === picked.title) { chosen.value = picked.poster_path ? image(picked.poster_path) : ''; chosenBackdrop.value = picked.backdrop_path ? backdrop(picked.backdrop_path) : ''; }
+  }, true);
+
+  const priorRender = r;
+  r = function() {
+    priorRender();
+    const latest = a[0], hero = document.querySelector('.hero');
+    let poster = hero.querySelector('.tmdb-poster');
+    if (!poster) { poster = document.createElement('div'); poster.className = 'tmdb-poster'; hero.prepend(poster); }
+    poster.style.backgroundImage = latest?.tmdbPoster ? 'url("' + latest.tmdbPoster.replace(/"/g, '') + '")' : '';
+    poster.hidden = !latest?.tmdbPoster; hero.classList.toggle('has-tmdb-poster', Boolean(latest?.tmdbPoster));
+    let scene = hero.querySelector('.tmdb-backdrop');
+    if (!scene) { scene = document.createElement('div'); scene.className = 'tmdb-backdrop'; hero.prepend(scene); }
+    const headerImage = latest?.tmdbBackdrop || latest?.tmdbPoster || '';
+    scene.style.backgroundImage = headerImage ? 'url("' + headerImage.replace(/"/g, '') + '")' : '';
+    scene.hidden = !headerImage;
+  };
+  r();
+
+  const footer = document.querySelector('.main');
+  if (footer && !document.querySelector('.tmdb-credit')) {
+    const credit = document.createElement('div');
+    credit.className = 'tmdb-credit';
+    credit.innerHTML = 'This product uses the TMDB API but is not endorsed or certified by TMDB. <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>';
+    footer.appendChild(credit);
+  }
+})();
+</script>
+
+
+<style>
+.hero.has-tmdb-poster{background:#090909!important}
+.hero.has-tmdb-poster .tmdb-poster{left:48%;right:4%;width:auto;opacity:1;background-position:center right;background-size:contain;background-repeat:no-repeat;mask-image:none!important;-webkit-mask-image:none!important}
+.hero.has-tmdb-poster .tmdb-poster:after{background:linear-gradient(90deg,#090909 0%,#09090933 34%,transparent 76%,#09090922 100%)}
+.hero.has-tmdb-poster:after{display:none}
+.hero.has-tmdb-poster .body{max-width:52%}
+</style>
+
+
+<style>
+.tmdb-backdrop{position:absolute;inset:0;z-index:-1;background:center/cover no-repeat;opacity:.42;filter:saturate(.82) contrast(.95)}
+.tmdb-backdrop:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#080808e8 0%,#080808a8 42%,#08080835 77%,#08080899 100%),linear-gradient(0deg,#0b0b0bdd 0%,transparent 48%)}
+.hero.has-tmdb-poster{z-index:0}
+.hero.has-tmdb-poster .tmdb-poster{z-index:0}
+.hero.has-tmdb-poster .nav,.hero.has-tmdb-poster .body{z-index:2}
+.hero.has-tmdb-poster .tmdb-poster:after{background:linear-gradient(90deg,#090909 0%,#09090933 34%,transparent 76%,#09090922 100%)}
+.main{position:relative}
+.main:before{content:'';position:absolute;top:0;left:7vw;right:7vw;height:1px;background:linear-gradient(90deg,transparent,#ff8e683d 22%,#ffffff92 50%,#ff8e683d 78%,transparent);box-shadow:0 -7px 22px #ff5a1f25}
+</style>
+
+
+<style>.hero.has-tmdb-poster .tmdb-backdrop{z-index:0}.hero.has-tmdb-poster .tmdb-poster{z-index:1}</style>
+
+
+<style>
+.tmdb-backdrop{opacity:.7!important;filter:none!important;background-position:center!important;background-size:cover!important}
+.tmdb-backdrop:after{background:linear-gradient(90deg,#080808bd 0%,#08080860 39%,transparent 72%),linear-gradient(0deg,#0b0b0b 0%,#0b0b0b66 16%,transparent 48%)!important}
+.hero.has-tmdb-poster{background:#0b0b0b!important}
+.hero.has-tmdb-poster .tmdb-poster:after{background:linear-gradient(90deg,#09090955 0%,transparent 40%,#0909091c 100%)!important}
+.main:before{display:none!important}
+</style>
+
+
+<style>
+.tmdb-backdrop:after{background:linear-gradient(0deg,#0b0b0b 0%,#0b0b0b8f 22%,transparent 62%)!important}
+.hero.has-tmdb-poster .body{text-shadow:0 2px 18px #000c}
+</style>
+
+
+<style>.latest-card{border:0!important;background:transparent!important;padding:8px 0!important;border-radius:0!important}.latest-card span{border-right:0!important;padding-right:12px!important}</style>
+
+
+<style>
+.latest-card{border:1px solid #ffffff77!important;background:#0000001c!important;padding:13px 15px!important;border-radius:14px!important}
+.latest-card span{border-right:1px solid #ffffff55!important;padding-right:10px!important}
+.latest-card span:last-child{border-right:0!important}
+@media(max-width:650px){.hero.has-tmdb-poster .tmdb-poster{display:none!important}.hero.has-tmdb-poster .body{max-width:100%!important}}
+</style>
+
+
+<style>
+.hero.has-tmdb-poster .tmdb-poster{display:none!important}
+.hero.has-tmdb-poster .body{max-width:100%!important}
+.tmdb-backdrop{inset:0!important;opacity:.55!important;background:center/cover no-repeat!important}
+.tmdb-backdrop:after{background:linear-gradient(0deg,#0b0b0be8 0%,#0b0b0b6e 28%,#0b0b0b30 65%,#0b0b0b45 100%)!important}
+.hero.has-tmdb-poster{background:#0b0b0b!important}
+</style>
+
+
+<style>
+.hero.has-tmdb-poster .tmdb-poster{display:block!important;z-index:1!important;left:auto!important;right:7vw!important;top:76px!important;bottom:auto!important;width:220px!important;height:330px!important;border-radius:20px!important;border:1px solid #ffffff65!important;box-shadow:0 20px 45px #0009!important;background-position:center!important;background-size:cover!important;background-repeat:no-repeat!important;overflow:hidden!important}
+.hero.has-tmdb-poster .tmdb-poster:after{background:linear-gradient(0deg,#00000035,transparent 45%)!important}
+.hero.has-tmdb-poster .body{max-width:58%!important}
+@media(max-width:650px){.hero.has-tmdb-poster .tmdb-poster{right:24px!important;top:72px!important;width:122px!important;height:183px!important;border-radius:15px!important}.hero.has-tmdb-poster .body{max-width:62%!important}.hero.has-tmdb-poster .body h1{font-size:clamp(39px,11vw,58px)!important;letter-spacing:-2px!important}.hero.has-tmdb-poster .latest-card{max-width:96%!important}}
+</style>
+
+
+<style>
+.hero.has-tmdb-poster .tmdb-poster{width:270px!important;height:405px!important;top:30px!important}
+.hero.has-tmdb-poster .body{max-width:55%!important}
+@media(max-width:650px){.hero.has-tmdb-poster .tmdb-poster{width:145px!important;height:218px!important;top:58px!important}.hero.has-tmdb-poster .body{max-width:57%!important}}
+</style>
+<script>
+(() => {
+  const API_KEY = '5f290fddbe46b3517c024d444e4eb3bb';
+  const originalHeaderRender = r;
+  let lastLookup = '';
+  r = function() {
+    originalHeaderRender();
+    const latest = a[0];
+    if (!latest || latest.tmdbBackdrop || latest._backdropLoading || lastLookup === latest.title) return;
+    lastLookup = latest.title;
+    latest._backdropLoading = true;
+    fetch('https://api.themoviedb.org/3/search/movie?api_key=' + encodeURIComponent(API_KEY) + '&query=' + encodeURIComponent(latest.title) + '&language=en-US')
+      .then(response => response.ok ? response.json() : Promise.reject())
+      .then(result => {
+        const match = (result.results || []).find(movie => movie.backdrop_path) || (result.results || [])[0];
+        if (match?.backdrop_path) {
+          latest.tmdbBackdrop = 'https://image.tmdb.org/t/p/original' + match.backdrop_path;
+          localStorage.setItem(K, JSON.stringify(a));
+        }
+      })
+      .catch(() => {})
+      .finally(() => { delete latest._backdropLoading; originalHeaderRender(); });
+  };
+  r();
+})();
+</script>
+
+
+<style>.hero.has-tmdb-poster .tmdb-backdrop{display:block!important;visibility:visible!important}</style>
+
+
+<style>
+.hero{min-height:540px!important;padding-left:7vw!important;padding-right:7vw!important}
+.hero.has-tmdb-poster .body{max-width:42%!important;padding-top:115px!important}
+.hero.has-tmdb-poster .tmdb-backdrop{display:block!important;visibility:visible!important;z-index:0!important;opacity:.72!important;background-position:center!important;background-size:cover!important}
+.hero.has-tmdb-poster .tmdb-backdrop:after{background:linear-gradient(90deg,#080808b8 0%,#08080880 37%,#08080828 75%,#0808084d 100%),linear-gradient(0deg,#0b0b0be8 0%,#0b0b0b45 30%,transparent 70%)!important}
+.hero.has-tmdb-poster .tmdb-poster{display:block!important;z-index:2!important;left:56%!important;right:auto!important;top:94px!important;width:255px!important;height:382px!important;border-radius:22px!important;border:1px solid #ffffff8c!important;background-position:center!important;background-size:cover!important;box-shadow:0 22px 55px #000c!important}
+.hero.has-tmdb-poster .nav,.hero.has-tmdb-poster .body{z-index:3!important}
+.hero.has-tmdb-poster .latest-card{background:#00000038!important;border-color:#ffffff77!important}
+@media(max-width:900px){.hero.has-tmdb-poster .body{max-width:48%!important}.hero.has-tmdb-poster .tmdb-poster{left:58%!important;width:220px!important;height:330px!important}}
+@media(max-width:650px){.hero{min-height:500px!important;padding-left:24px!important;padding-right:24px!important}.hero.has-tmdb-poster .body{max-width:54%!important;padding-top:92px!important}.hero.has-tmdb-poster .tmdb-poster{left:auto!important;right:28px!important;top:90px!important;width:132px!important;height:198px!important;border-radius:17px!important}.hero.has-tmdb-poster .body h1{font-size:clamp(34px,10vw,52px)!important;line-height:.95!important;letter-spacing:-1px!important}.hero.has-tmdb-poster .latest-card{font-size:11px!important;padding:9px!important}.hero.has-tmdb-poster .stats{margin-top:22px!important}}
+</style>
+
+
+<style>
+.hero.has-tmdb-poster .tmdb-backdrop{display:block!important;visibility:visible!important;opacity:.86!important;background-image:var(--fallback-backdrop)!important;background-position:center!important;background-size:cover!important}
+.hero.has-tmdb-poster .tmdb-backdrop:after{background:linear-gradient(90deg,#06060699 0%,#06060664 40%,#06060625 76%,#0606064d 100%),linear-gradient(0deg,#0b0b0bce 0%,#0b0b0b30 50%,transparent 100%)!important}
+</style>
+<script>
+(() => {
+  const previous = r;
+  r = function() {
+    previous();
+    const latest = a[0], hero = document.querySelector('.hero'), backdrop = hero?.querySelector('.tmdb-backdrop');
+    if (!latest || !hero || !backdrop) return;
+    const image = latest.tmdbBackdrop || latest.tmdbPoster || '';
+    if (image) {
+      hero.classList.add('has-tmdb-poster');
+      backdrop.hidden = false;
+      backdrop.style.setProperty('--fallback-backdrop', 'url("' + image.replace(/"/g, '') + '")');
+      backdrop.style.backgroundImage = 'url("' + image.replace(/"/g, '') + '")';
+    }
+  };
+  r();
+})();
+</script>
+
+
+<style>
+.hero.has-tmdb-poster .tmdb-poster{top:auto!important;bottom:35px!important}
+@media(max-width:650px){.hero.has-tmdb-poster .tmdb-poster{top:auto!important;bottom:26px!important}}
+</style>
+
+
+<style>.body>small{color:#ff5a1f!important}.stat span{color:#ff5a1f!important}</style>
+
+
+<style>.logo{display:flex;align-items:center}.logo img{display:block;width:92px;height:38px;object-fit:contain;object-position:left center;mix-blend-mode:screen}</style>
+
+
+<style>.logo img{width:150px!important;height:56px!important}</style>
+
+
+<style>.logo img{width:205px!important;height:74px!important}</style>
