@@ -307,3 +307,17 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
 
 
 <style>.logo img{width:205px!important;height:74px!important}</style>
+
+<script type="module">
+const SUPABASE_URL='https://dspzpbttwpszoummbaja.supabase.co';
+const SUPABASE_KEY='sb_publishable_jpcMYvEWrsVdy4F4j91w-w_VcnOPgB_';
+let remoteSyncBusy=false,lastMovieState='',lastPosterState='';
+try{
+ const {createClient}=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm');
+ const db=createClient(SUPABASE_URL,SUPABASE_KEY);
+ const rid=()=>crypto.randomUUID();
+ async function pull(){const [mr,pr]=await Promise.all([db.from('movie_records').select('id,payload,created_at').order('created_at',{ascending:false}),db.from('poster_records').select('id,payload,created_at').order('created_at',{ascending:false})]);if(mr.error||pr.error)return;remoteSyncBusy=true;if(mr.data.length){a=mr.data.map(x=>({...x.payload,remoteId:x.id}));localStorage.setItem(K,JSON.stringify(a))}if(pr.data.length){posterData=pr.data.map(x=>({...x.payload,remoteId:x.id}));localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData))}lastMovieState=JSON.stringify(a);lastPosterState=JSON.stringify(posterData);remoteSyncBusy=false;r()}
+ async function push(){if(remoteSyncBusy)return;const movies=a.map(x=>{if(!x.remoteId)x.remoteId=rid();return{id:x.remoteId,payload:x}}),posters=posterData.map(x=>{if(!x.remoteId)x.remoteId=rid();return{id:x.remoteId,payload:x}});const [mr,pr]=await Promise.all([db.from('movie_records').upsert(movies,{onConflict:'id'}),db.from('poster_records').upsert(posters,{onConflict:'id'})]);if(!mr.error&&!pr.error){const [om,op]=await Promise.all([db.from('movie_records').select('id'),db.from('poster_records').select('id')]);for(const x of om.data||[])if(!movies.some(y=>y.id===x.id))await db.from('movie_records').delete().eq('id',x.id);for(const x of op.data||[])if(!posters.some(y=>y.id===x.id))await db.from('poster_records').delete().eq('id',x.id);localStorage.setItem(K,JSON.stringify(a));localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));lastMovieState=JSON.stringify(a);lastPosterState=JSON.stringify(posterData)}}
+ await pull();if(!a.length&&!posterData.length)await push();setInterval(async()=>{const ms=JSON.stringify(a),ps=JSON.stringify(posterData);if(ms!==lastMovieState||ps!==lastPosterState)await push()},1500);
+}catch(e){console.warn('Cloud sync unavailable',e)}
+</script>
