@@ -427,3 +427,17 @@ try{
 }
 @media (max-width:380px){#d .radios{grid-template-columns:1fr}}
 </style>
+
+<style>
+@media (max-width:650px){
+  #d .form,#posterDialog .poster-form{width:100%;min-width:0;overflow:hidden}
+  #d .form>label,#posterDialog .poster-form>label{width:100%;min-width:0;max-width:100%}
+  #d input,#d select,#posterDialog input,#posterDialog select{width:100%;min-width:0;max-width:100%;box-sizing:border-box}
+  #d input[type=date],#posterDialog input[type=date]{-webkit-appearance:none;appearance:none}
+  #d .stars{gap:7px;padding-top:6px}
+  #d .stars label{font-size:42px!important;line-height:1}
+  #d .radios{display:flex;flex-wrap:wrap;gap:8px}
+  #d .radios label{flex:0 1 auto;min-height:42px;padding:8px 12px;font-size:13px!important;border-radius:10px}
+  #d .radios input{width:auto;min-height:0;margin:0 5px 0 0}
+}
+</style>
