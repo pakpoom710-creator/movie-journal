@@ -17,9 +17,56 @@
 <style>.stats{grid-template-columns:repeat(3,1fr)!important}@media(max-width:650px){.stats{grid-template-columns:1fr 1fr!important}}</style>
 
 
-<dialog id="posterDialog"><div class="poster-modal"><div class="poster-head"><div><small>POSTER COLLECTION</small><h2>เพิ่มโปสเตอร์ใหม่</h2></div><button id="posterClose" class="close">×</button></div><form id="posterForm" class="poster-form"><label>โปสเตอร์ในระบบอะไร<select name="format" required><option>Digital 2D</option><option>IMAX</option><option>ScreenX</option><option>4DX</option><option>Dolby VISION + ATMOS</option></select></label><label>วันที่ได้รับ<input name="date" type="date" required></label><label class="poster-full">ชื่อหนัง (ไม่บังคับ)<input name="title" placeholder="ใช้เพื่ออ้างอิงในภายหลัง"></label><button class="poster-save">บันทึกโปสเตอร์</button></form></div></dialog>
+<dialog id="posterDialog"><div class="poster-modal"><div class="poster-head"><div><small>POSTER COLLECTION</small><h2>เพิ่มโปสเตอร์ใหม่</h2></div><button id="posterClose" class="close">×</button></div><form id="posterForm" class="poster-form"><label>โปสเตอร์ในระบบอะไร<select name="format" required><option>Digital 2D</option><option>IMAX</option><option>ScreenX</option><option>4DX</option><option>Dolby VISION + ATMOS</option></select></label><label>วันที่ได้รับ<input name="date" type="date" required></label><label class="poster-full poster-movie-search">ชื่อหนัง (บังคับ)<input name="title" required autocomplete="off" placeholder="พิมพ์ชื่อหนังเพื่อค้นหาโปสเตอร์"><div class="poster-title-suggestions" role="listbox" hidden></div></label><input name="posterImage" type="hidden"><section class="poster-image-picker poster-full" hidden><div class="poster-picker-heading"><b>เลือกภาพโปสเตอร์</b><small>เลือกหนึ่งภาพเพื่อบันทึก</small></div><div class="poster-image-options" role="listbox"></div></section><button class="poster-save">บันทึกโปสเตอร์</button></form></div></dialog>
 <style>#posterDialog{border:1px solid #ffffff55;border-radius:24px;background:#101010b8;color:#fff;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);width:min(500px,92vw);box-shadow:0 28px 80px #000b}#posterDialog::backdrop{background:#000d}.poster-modal{padding:29px;background:linear-gradient(145deg,#ff5a1f40,#101010cc 45%,#000000d9)}.poster-head{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:17px;border-bottom:1px solid #ffffff35}.poster-head small{color:#ffb49a;font:11px Prompt,sans-serif;letter-spacing:.08em}.poster-head h2{margin:5px 0 0;font:700 27px Prompt,sans-serif}.poster-head .close{color:#fff}.poster-form{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:20px}.poster-form label{color:#ffd9cb}.poster-form input,.poster-form select{background:#00000066;border:1px solid #ffffff55;border-radius:11px;color:#fff}.poster-full{grid-column:1/-1}.poster-save{grid-column:1/-1;border:0;border-radius:99px;padding:14px;background:#fff;color:#21100c;font:700 13px Prompt,sans-serif;cursor:pointer}.poster-save:hover{background:#ff5a1f;color:#fff}@media(max-width:500px){.poster-form{grid-template-columns:1fr}}</style>
-<script>document.querySelector('#addPoster').onclick=()=>document.querySelector('#posterDialog').showModal();document.querySelector('#posterClose').onclick=()=>document.querySelector('#posterDialog').close();document.querySelector('#posterForm').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));d.source='manual';posterData.unshift(d);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));e.target.reset();document.querySelector('#posterDialog').close();r()}</script>
+<script>document.querySelector('#addPoster').onclick=()=>document.querySelector('#posterDialog').showModal();document.querySelector('#posterClose').onclick=()=>document.querySelector('#posterDialog').close();document.querySelector('#posterForm').onsubmit=e=>{e.preventDefault();let d=Object.fromEntries(new FormData(e.target));if(!d.posterImage){alert('กรุณาเลือกภาพโปสเตอร์ก่อนบันทึก');return}d.source='manual';posterData.unshift(d);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));e.target.reset();document.querySelector('#posterDialog').close();r()}</script>
+
+<style>
+/* Poster lookup: identify the movie first, then choose one poster belonging to that title. */
+#posterDialog .poster-movie-search{position:relative}.poster-title-suggestions{position:absolute;z-index:20;top:calc(100% + 5px);right:0;left:0;max-height:230px;overflow:auto;border:1px solid #ffffff32;border-radius:12px;background:#111;box-shadow:0 15px 35px #000c}.poster-title-suggestion{display:grid;grid-template-columns:34px minmax(0,1fr);gap:9px;width:100%;padding:8px;border:0;border-bottom:1px solid #ffffff16;background:transparent;color:#fff;text-align:left;cursor:pointer}.poster-title-suggestion:last-child{border-bottom:0}.poster-title-suggestion:hover{background:#ff5a1f24}.poster-title-suggestion img{width:34px;height:50px;border-radius:5px;object-fit:cover;background:#292929}.poster-title-suggestion b{display:block;overflow:hidden;margin-top:3px;white-space:nowrap;text-overflow:ellipsis;font:600 12px Prompt,sans-serif}.poster-title-suggestion small{display:block;margin-top:3px;color:#aaa;font:10px Prompt,sans-serif}.poster-image-picker{padding:14px;border:1px solid #ffffff21;border-radius:14px;background:#111}.poster-picker-heading{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:10px}.poster-picker-heading b{font:700 13px Prompt,sans-serif}.poster-picker-heading small{color:#aaa;font:11px Prompt,sans-serif}.poster-image-options{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;max-height:360px;overflow:auto;padding-right:3px}.poster-image-choice{position:relative;padding:0;border:2px solid transparent;border-radius:9px;background:#191919;overflow:hidden;aspect-ratio:2/3;cursor:pointer}.poster-image-choice:hover,.poster-image-choice.selected{border-color:#ff5a1f}.poster-image-choice.selected:after{content:'✓';position:absolute;right:4px;top:4px;width:19px;height:19px;border-radius:50%;display:grid;place-items:center;background:#ff5a1f;color:#fff;font:bold 13px Arial}.poster-image-choice img{width:100%;height:100%;object-fit:cover;display:block;background:#292929}.poster-image-empty{margin:0;padding:8px;color:#aaa;font:11px Prompt,sans-serif}@media(max-width:500px){.poster-image-picker{padding:12px}.poster-picker-heading{align-items:flex-start;flex-direction:column;gap:3px}.poster-image-options{grid-template-columns:repeat(4,minmax(0,1fr));max-height:320px}}
+</style>
+<script>
+(()=>{
+  const form=document.querySelector('#posterForm'),title=form?.elements.title,picker=form?.querySelector('.poster-image-picker'),suggestions=form?.querySelector('.poster-title-suggestions'),imageInput=form?.elements.posterImage,posterOptions=form?.querySelector('.poster-image-options');
+  if(!form||!title||!picker||!suggestions||!imageInput||!posterOptions)return;
+  const apiKey='5f290fddbe46b3517c024d444e4eb3bb',image=path=>path?`https://image.tmdb.org/t/p/w342${path}`:'',escapeHtml=value=>String(value||'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char])),normalise=value=>String(value||'').trim().toLocaleLowerCase();
+  let results=[],posterPaths=[],timer,lookupVersion=0;
+  const clearPosterChoice=()=>{imageInput.value='';posterPaths=[];posterOptions.innerHTML='';picker.hidden=true};
+  const choosePoster=index=>{const path=posterPaths[index];if(!path)return;imageInput.value=image(path);posterOptions.querySelectorAll('.poster-image-choice').forEach((item,itemIndex)=>item.classList.toggle('selected',itemIndex===index))};
+  const renderPosterChoices=(movie,paths)=>{posterPaths=paths;picker.hidden=false;posterOptions.innerHTML=paths.length?paths.map((path,index)=>`<button type="button" class="poster-image-choice" data-poster-image="${index}" role="option" aria-label="เลือกโปสเตอร์ ${index+1} ของ ${escapeHtml(movie.title)}"><img src="${image(path)}" alt="โปสเตอร์ ${escapeHtml(movie.title)} ${index+1}"></button>`).join(''):'<p class="poster-image-empty">ไม่พบรูปภาพโปสเตอร์ของเรื่องนี้</p>'};
+  const showMoviePosters=async movie=>{
+    const currentLookup=++lookupVersion;
+    title.value=movie.title;
+    suggestions.hidden=true;
+    clearPosterChoice();
+    try{
+      const response=await fetch(`https://api.themoviedb.org/3/movie/${movie.id}/images?api_key=${encodeURIComponent(apiKey)}&include_image_language=en,null`);
+      if(!response.ok)throw new Error('TMDB image request failed');
+      const data=await response.json();
+      const paths=[...new Set([movie.poster_path,...(data.posters||[]).map(poster=>poster.file_path)].filter(Boolean))];
+      if(currentLookup!==lookupVersion)return;
+      renderPosterChoices(movie,paths);
+    }catch{
+      if(currentLookup!==lookupVersion)return;
+      renderPosterChoices(movie,movie.poster_path?[movie.poster_path]:[]);
+    }
+  };
+  const renderSuggestions=()=>{suggestions.innerHTML=results.length?results.map((movie,index)=>`<button type="button" class="poster-title-suggestion" data-poster-title="${index}" role="option"><img src="${image(movie.poster_path)}" alt=""><span><b>${escapeHtml(movie.title)}</b><small>${escapeHtml((movie.release_date||'').slice(0,4)||'ไม่ระบุปี')}</small></span></button>`).join(''):'<p class="poster-image-empty">ไม่พบชื่อหนัง ลองพิมพ์ใหม่อีกครั้ง</p>';suggestions.hidden=false};
+  const search=async query=>{
+    try{
+      const response=await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${encodeURIComponent(apiKey)}&query=${encodeURIComponent(query)}&language=en-US`);
+      if(!response.ok)throw new Error('TMDB request failed');
+      results=(await response.json()).results?.filter(movie=>movie.poster_path).slice(0,6)||[];
+      const exact=results.find(movie=>normalise(movie.title)===normalise(query));
+      if(exact)showMoviePosters(exact);else renderSuggestions();
+    }catch{results=[];renderSuggestions()}
+  };
+  title.addEventListener('input',()=>{lookupVersion++;clearPosterChoice();results=[];suggestions.hidden=true;clearTimeout(timer);const query=title.value.trim();if(query.length<2)return;timer=setTimeout(()=>search(query),280)});
+  suggestions.addEventListener('click',event=>{const choice=event.target.closest('[data-poster-title]');if(!choice)return;const movie=results[Number(choice.dataset.posterTitle)];if(movie)showMoviePosters(movie)});
+  posterOptions.addEventListener('click',event=>{const choice=event.target.closest('[data-poster-image]');if(choice)choosePoster(Number(choice.dataset.posterImage))});
+  form.addEventListener('reset',()=>{lookupVersion++;clearTimeout(timer);results=[];suggestions.hidden=true;suggestions.innerHTML='';clearPosterChoice()});
+})();
+</script>
 
 
 <style>#d{background:#080808!important;border:1px solid #ffffff55!important;border-radius:24px!important;color:#fff!important;box-shadow:0 28px 80px #000c!important}#d .modal{background:#080808!important}#d .head{border-bottom:1px solid #ffffff35!important}#d .movie-kicker{display:block;color:#ff5a1f!important;font:700 11px Prompt,sans-serif!important;letter-spacing:.1em;margin-bottom:5px}#d .head h2{color:#fff!important}#d label,#d .label{color:#ffb49a!important}#d input,#d select{background:#151515!important;color:#fff!important;border-color:#ffffff50!important}#d .radios label{background:#151515!important;color:#fff!important}</style>
@@ -47,6 +94,58 @@ function renderHistory(){let isMovie=activeHistory==='movies',list=isMovie?a:pos
 document.body.addEventListener('click',e=>{let open=e.target.closest('.history-open'),del=e.target.closest('.poster-delete');if(open){activeHistory=open.dataset.history;renderHistory();document.querySelector('#historyDialog').showModal()}if(del){posterData.splice(+del.dataset.posterIndex,1);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));r();if(document.querySelector('#historyDialog').open)renderHistory()}});
 document.querySelector('#historyClose').onclick=()=>document.querySelector('#historyDialog').close();r();
 </script>
+<style>
+/* Redesigned add-movie form: focused fields with a live ticket preview. */
+#d.movie-entry-dialog{width:min(1060px,94vw);max-height:calc(100dvh - 28px);padding:0;overflow:auto;border:1px solid #ffffff20;border-radius:24px;background:#101010;color:#fff;box-shadow:0 28px 90px #000d}
+#d.movie-entry-dialog::backdrop{background:#000d;backdrop-filter:blur(5px)}
+#d .movie-form-shell{display:grid!important;grid-template-columns:minmax(0,1fr) 280px;gap:22px;padding:28px!important;background:linear-gradient(145deg,#1e1e1e,#101010 54%,#090909)}
+#d .movie-form-head{grid-column:1/-1;display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:13px;padding:0 0 18px!important;border-bottom:1px solid #ffffff1e!important}
+#d .movie-form-head>div{order:2}.movie-form-head .movie-kicker{margin:0 0 4px;color:#ff6a35;font:700 11px Prompt,sans-serif;letter-spacing:.14em}.movie-form-head h2{margin:0!important;color:#fff!important;font-size:31px!important;letter-spacing:-.04em}.movie-form-head .close{order:1;display:grid;place-items:center;width:36px;height:36px;margin:0;padding:0;border:0;border-radius:50%;background:#ffffff0b!important;color:#fff!important;font-size:29px!important;line-height:1;cursor:pointer}.movie-form-head .close:hover{background:#ff5a1f!important}
+#d .movie-form{display:block!important;min-width:0;margin:0!important}.movie-input-section{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px;padding:20px;border:1px solid #ffffff18;border-radius:18px;background:#181818}.movie-section-label{grid-column:1/-1;margin:0;color:#ff8c62;font:700 10px Prompt,sans-serif;letter-spacing:.14em}.movie-input-section>label{display:block;margin:0!important;color:#f3f3f3!important;font:600 12px Prompt,sans-serif}.movie-input-section>.full{grid-column:1/-1}.movie-input-section input,.movie-input-section select{width:100%!important;height:46px!important;margin:7px 0 0!important;padding:0 13px!important;border:1px solid #ffffff2d!important;border-radius:10px!important;background:#0f0f0f!important;color:#fff!important;font:500 14px Prompt,sans-serif!important;outline:0}.movie-input-section input:focus,.movie-input-section select:focus{border-color:#ff5a1f!important;box-shadow:0 0 0 3px #ff5a1f2e}.movie-input-section input::placeholder{color:#787878}
+#d .movie-rating-row,#d .movie-poster-options{margin:2px 0 0}.movie-rating-row .label,.movie-poster-options .label{margin-bottom:9px;color:#f3f3f3!important;font:600 12px Prompt,sans-serif}.movie-rating-row .stars{gap:7px}.movie-rating-row .stars input{position:absolute!important;width:1px!important;height:1px!important;min-width:0!important;margin:-1px!important;padding:0!important;overflow:hidden!important;opacity:0!important;pointer-events:none}.movie-rating-row .stars label{font-size:35px!important;line-height:1;color:#4c4c4c!important;transition:transform .15s,color .15s}.movie-rating-row .stars label.on{color:#ff5a1f!important}.movie-rating-row .stars label:hover{transform:translateY(-2px)}.movie-poster-options .radios{gap:8px}.movie-poster-options .radios label{display:inline-flex;align-items:center;gap:5px;margin:0;padding:8px 11px!important;border:1px solid #ffffff28!important;border-radius:9px!important;background:#101010!important;color:#eee!important;font:600 11px Prompt,sans-serif}.movie-poster-options .radios input{width:14px!important;height:14px!important;min-width:0!important;margin:0!important;padding:0!important;accent-color:#ff5a1f}.movie-form-shell #pf,.movie-form-shell .save{display:none!important}
+#d .movie-form-preview{min-width:0;padding:18px;border:1px solid #ffffff20;border-radius:18px;background:#141414;align-self:start}.movie-preview-kicker{margin:0 0 10px;color:#aaa;font:700 10px Prompt,sans-serif;letter-spacing:.12em}.movie-preview-ticket{min-height:284px;padding:20px;border-radius:14px;background:#f8f7f3;color:#151515}.movie-preview-title-row{display:grid;grid-template-columns:62px minmax(0,1fr);gap:12px;align-items:start}.movie-preview-art{position:relative;width:62px;height:84px;overflow:hidden;border-radius:8px;background:linear-gradient(145deg,#2a2a2a,#101010)}.movie-preview-art:after{position:absolute;inset:0;content:'';background:linear-gradient(145deg,#ff5a1f44,transparent 48%,#0008)}.movie-preview-art img{display:none;width:100%;height:100%;object-fit:cover;position:relative;z-index:1}.movie-preview-art.has-poster img{display:block}.movie-preview-art span{position:absolute;z-index:2;inset:auto 6px 7px;color:#fff;font:700 7px/1 Prompt,sans-serif;letter-spacing:.11em}.movie-preview-art.has-poster span{display:none}.movie-preview-ticket .preview-label{display:block;color:#ff5a1f;font-size:9px;font-weight:700;letter-spacing:.13em}.movie-preview-ticket h3{display:-webkit-box;min-height:57px;margin:7px 0 0;overflow:hidden;font-size:24px;line-height:1.08;letter-spacing:-.045em;-webkit-box-orient:vertical;-webkit-line-clamp:2}.movie-preview-ticket>p{margin:14px 0 18px;color:#777;font-size:11px}.preview-rule{border-top:1px dashed #bcbab6}.movie-preview-meta{display:grid;grid-template-columns:1fr 1fr;gap:15px 12px;padding-top:17px}.movie-preview-meta small{display:block;color:#777;font-size:9px;letter-spacing:.1em}.movie-preview-meta b{display:block;margin-top:4px;color:#151515;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.movie-preview-meta .preview-stars{color:#ff5a1f;font-size:15px;letter-spacing:.05em}.movie-preview-save{width:100%;margin-top:14px;border:0;border-radius:10px;padding:13px 15px;background:#fff;color:#161616;font:700 13px Prompt,sans-serif;cursor:pointer}.movie-preview-save:hover{background:#ff5a1f;color:#fff}
+@media(max-width:760px){#d.movie-entry-dialog{width:min(94vw,530px);max-height:calc(100dvh - 18px);border-radius:18px}#d .movie-form-shell{grid-template-columns:1fr;gap:15px;padding:20px!important}.movie-form-head h2{font-size:27px!important}.movie-input-section{gap:12px;padding:16px}.movie-preview-ticket{min-height:0}.movie-preview-ticket h3{min-height:0}.movie-preview-meta{padding-top:14px}.movie-preview-save{margin-top:12px}}
+@media(max-width:420px){.movie-input-section{grid-template-columns:1fr}.movie-input-section>label:not(.full){grid-column:1/-1}.movie-rating-row .stars{gap:4px}.movie-rating-row .stars label{font-size:31px!important}}
+</style>
+<script>
+/* Turn the existing movie form into a live, two-column entry experience without changing its save logic. */
+(()=>{
+  const dialog=document.querySelector('#d'),form=document.querySelector('#f');
+  if(!dialog||!form||dialog.dataset.movieFormRedesign)return;
+  dialog.dataset.movieFormRedesign='true';
+  dialog.classList.add('movie-entry-dialog');
+  const modal=dialog.querySelector('.modal'),head=modal.querySelector('.head'),close=modal.querySelector('#x');
+  modal.classList.add('movie-form-shell');head.classList.add('movie-form-head');
+  head.querySelector('.movie-kicker').textContent='NEW MOVIE';head.querySelector('h2').textContent='เพิ่มหนังที่ดู';
+  close.textContent='‹';close.setAttribute('aria-label','ย้อนกลับ');
+  form.classList.add('movie-form');
+  const fields=[form.querySelector('input[name="title"]')?.closest('label'),form.querySelector('input[name="date"]')?.closest('label'),form.querySelector('input[name="showtime"]')?.closest('label'),form.querySelector('select[name="format"]')?.closest('label'),form.querySelector('#stars')?.closest('.full'),form.querySelector('[name="hasPoster"]')?.closest('.full')].filter(Boolean);
+  const section=document.createElement('section');section.className='movie-input-section';section.innerHTML='<p class="movie-section-label">ข้อมูลการดูภาพยนตร์</p>';
+  fields.forEach(field=>section.append(field));
+  form.prepend(section);
+  section.querySelector('#stars')?.closest('.full')?.classList.add('movie-rating-row');
+  section.querySelector('[name="hasPoster"]')?.closest('.full')?.classList.add('movie-poster-options');
+  form.querySelector('#pf')?.setAttribute('hidden','');form.querySelector('.save')?.setAttribute('hidden','');
+  const preview=document.createElement('aside');preview.className='movie-form-preview';
+  preview.innerHTML='<p class="movie-preview-kicker">ตัวอย่างตั๋ว</p><div class="movie-preview-ticket"><div class="movie-preview-title-row"><div class="movie-preview-art"><img data-preview-poster alt=""><span>รูปภาพ</span></div><div><span class="preview-label">NEW TICKET</span><h3 data-preview-title>ชื่อหนัง</h3></div></div><p data-preview-subtitle>บันทึกความทรงจำบนจอ</p><div class="preview-rule"></div><div class="movie-preview-meta"><div><small>DATE</small><b data-preview-date>เลือกวันที่ดู</b></div><div><small>TIME</small><b data-preview-time>--:--</b></div><div><small>FORMAT</small><b data-preview-format>Digital 2D</b></div><div><small>RATING</small><b class="preview-stars" data-preview-rating>★★★★★</b></div></div></div><button class="movie-preview-save" type="submit" form="f">บันทึกหนัง</button>';
+  modal.append(preview);
+  const title=form.elements.title,date=form.elements.date,time=form.elements.showtime,format=form.elements.format;
+  const setText=(selector,value)=>{const element=preview.querySelector(selector);if(element)element.textContent=value};
+  const refresh=()=>{
+    const [year,month,day]=String(date.value||'').split('-');
+    const rating=Number(form.querySelector('[name="rating"]:checked')?.value||5);
+    setText('[data-preview-title]',title.value.trim()||'ชื่อหนัง');
+    setText('[data-preview-date]',year&&month&&day?`${day}/${month}/${year}`:'เลือกวันที่ดู');
+    setText('[data-preview-time]',time.value||'--:--');
+    setText('[data-preview-format]',format.value||'Digital 2D');
+    setText('[data-preview-rating]','★'.repeat(rating)+'☆'.repeat(5-rating));
+    setText('[data-preview-subtitle]',form.querySelector('[name="hasPoster"]:checked')?.value==='yes'?'ได้รับโปสเตอร์แล้ว':'บันทึกความทรงจำบนจอ');
+    const posterUrl=form.elements.tmdbPoster?.value||'',poster=preview.querySelector('[data-preview-poster]'),art=poster?.closest('.movie-preview-art');
+    if(posterUrl&&poster){poster.src=posterUrl;art?.classList.add('has-poster')}else if(poster){poster.removeAttribute('src');art?.classList.remove('has-poster')}
+  };
+  form.addEventListener('input',refresh);form.addEventListener('change',refresh);form.addEventListener('click',()=>setTimeout(refresh,0));form.addEventListener('reset',()=>setTimeout(refresh,0));refresh();
+})();
+</script>
 
 
 <style>
@@ -63,6 +162,206 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
 <style>
 @media(max-width:650px){#records .record{grid-template-columns:34% minmax(0,1fr) 76px!important;grid-template-rows:1fr 38px!important;min-height:165px!important;padding:0 12px 0 0!important;overflow:hidden!important}#records .record-poster{grid-column:1!important;grid-row:1/3!important;width:100%!important;height:165px!important;min-height:165px!important;border-radius:18px 0 0 18px!important}#records .record .movie-meta{grid-column:2!important;grid-row:1!important;padding:22px 0 0!important}#records .record .movie-format{grid-column:3!important;grid-row:1!important;padding:22px 0 0!important}#records .record .movie-actions{grid-column:2/4!important;grid-row:2!important;padding:0 0 13px!important;display:flex!important;align-items:end!important;justify-content:space-between!important}.record-actions .delete{margin-left:auto!important}.record small{font-size:10px!important}}
 </style>
+
+<style>
+/* Poster counts sit above the archive and deletion is always visible. */
+.archive-poster-summary{display:grid;grid-template-columns:minmax(210px,.85fr) minmax(0,1.7fr);gap:24px;align-items:center;margin-bottom:30px;padding:21px;border:1px solid #ffffff18;border-radius:18px;background:#151515}.archive-poster-summary h2{margin:0;color:#fff;font-size:25px;letter-spacing:-.04em}.archive-poster-summary>div>small{display:block;margin-top:6px;color:#aaa;font-size:11px}.archive-poster-counts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.archive-poster-counts .archive-format{min-height:70px;padding:12px;border:1px solid #ffffff12;border-radius:11px;background:#1c1c1c;color:#fff;overflow:hidden}.archive-poster-counts .archive-format b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px}.archive-poster-counts .archive-format small{display:block;margin-top:7px;color:#ff6c38;font-size:12px;font-weight:700}.archive-row .archive-delete{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:38px;min-height:28px}
+@media(max-width:820px){.archive-poster-summary{grid-template-columns:1fr;gap:15px;margin-bottom:23px;padding:17px}.archive-poster-summary h2{font-size:22px}.archive-poster-counts{grid-template-columns:repeat(2,1fr)}.archive-poster-counts .archive-format{min-height:62px}.archive-poster-counts .archive-format:last-child{grid-column:1/-1}.archive-row .archive-delete{min-width:40px}}
+</style>
+
+<style>
+/* Retire the previous poster-summary landing section. */
+.main{display:none!important}
+</style>
+
+<style>
+/* Final three-screen application layout. */
+.app-screen-list{max-width:1040px;margin:0 auto}.archive-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:24px}.archive-kicker{margin:0 0 6px;color:#ff5a1f;font-size:11px;font-weight:700;letter-spacing:.13em}.archive-head h1{margin:0;color:#fff;font-size:40px;line-height:1;letter-spacing:-.05em}.archive-count{display:block;margin-top:7px;color:#9d9d9d;font-size:12px}.archive-add{border:0;border-radius:12px;padding:12px 17px;background:#fff;color:#111;font:700 12px Prompt,sans-serif;cursor:pointer}.archive-add:hover{background:#ff5a1f;color:#fff}
+.archive-box{border:1px solid #ffffff18;border-radius:18px;overflow:hidden;background:#151515}.archive-tabs{display:flex;align-items:center;gap:6px;padding:10px;border-bottom:1px solid #ffffff12;background:#1b1b1b}.archive-tabs button{border:0;border-radius:8px;padding:9px 12px;background:transparent;color:#bbb;font:600 11px Prompt,sans-serif;cursor:pointer}.archive-tabs button:hover{background:#ffffff0d;color:#fff}.archive-tabs button.active{background:#ff5a1f;color:#fff}
+.archive-formats{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;border-bottom:1px solid #ffffff12;background:#ffffff12}.archive-format{padding:12px 13px;background:#151515;color:#fff;font-size:11px}.archive-format small{display:block;margin-top:3px;color:#ff8b61;font-size:10px}.archive-list{display:grid;gap:9px;padding:12px}.archive-row{display:grid;grid-template-columns:50px minmax(0,1fr) auto auto;align-items:center;gap:12px;min-height:68px;padding:8px;border:1px solid #ffffff12;border-radius:13px;background:#1a1a1a}.archive-row img,.archive-icon{width:50px;height:52px;border-radius:9px;object-fit:cover;background:#2a2a2a}.archive-icon{display:grid;place-items:center;color:#ff5a1f;font-size:20px}.archive-row b{display:block;color:#fff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.archive-row small{display:block;margin-top:4px;color:#aaa;font-size:10px}.archive-row em{color:#ffb298;font-size:10px;font-style:normal}.archive-delete{border:1px solid #ff5a1f;border-radius:99px;padding:5px 9px;background:transparent;color:#ff7a45;font:700 10px Prompt,sans-serif;cursor:pointer}.archive-delete:hover{background:#ff5a1f;color:#fff}.archive-more{display:block;margin:1px auto 5px;border:1px solid #ffffff3c;border-radius:99px;padding:9px 15px;background:#222;color:#fff;font:600 11px Prompt,sans-serif;cursor:pointer}.archive-more:hover{border-color:#ff5a1f;background:#ff5a1f}
+.app-calendar{max-width:1040px;margin:0 auto}.calendar-app-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:22px}.calendar-app-head h1{margin:0;color:#fff;font-size:40px;letter-spacing:-.05em}.calendar-app-head p{margin:7px 0 0;color:#aaa;font-size:12px}.calendar-month-nav{display:flex;align-items:center;gap:11px;border:1px solid #ffffff22;border-radius:11px;padding:5px;background:#161616}.calendar-month-nav button{width:31px;height:31px;border:0;border-radius:7px;background:transparent;color:#fff;font-size:19px;cursor:pointer}.calendar-month-nav button:hover{background:#ff5a1f}.calendar-month-nav b{min-width:125px;font-size:12px;text-align:center}.calendar-app-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-bottom:16px}.calendar-app-stat{padding:17px;border:1px solid #ffffff18;border-radius:17px;background:#1b1b1b}.calendar-app-stat:first-child{background:#ff5a1f;border-color:#ff5a1f}.calendar-app-stat:nth-child(2){background:#fff;color:#111}.calendar-app-stat small{display:block;font-size:10px;opacity:.8}.calendar-app-stat b{display:block;margin-top:6px;font-size:28px;line-height:1}.calendar-app-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(270px,.82fr);gap:16px}.calendar-app-grid,.calendar-app-events{border:1px solid #ffffff18;border-radius:18px;background:#151515;padding:17px}.calendar-app-weekdays,.calendar-app-days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.calendar-app-weekdays{margin-bottom:8px;color:#aaa;font-size:10px;text-align:center}.calendar-app-day{position:relative;min-height:72px;padding:8px;border-radius:10px;background:#1b1b1b;color:#fff;font-size:11px}.calendar-app-day.out{color:#656565}.calendar-app-day.today{outline:1px solid #ff5a1f}.calendar-app-day.has{background:#552819}.calendar-app-day span{position:absolute;left:8px;bottom:7px;display:grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:#ff5a1f;color:#fff;font-size:9px;font-weight:700}.calendar-app-events h2{margin:0 0 11px;color:#fff;font-size:16px}.calendar-app-event{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff13}.calendar-app-event:last-child{border:0}.calendar-app-event-date{display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:#ff5a1f;color:#fff;font-size:12px;font-weight:700}.calendar-app-event b{display:block;font-size:11px}.calendar-app-event small{display:block;margin-top:2px;color:#aaa;font-size:10px}.app-empty{padding:30px 14px;border:1px dashed #ffffff22;border-radius:12px;color:#aaa;text-align:center;font-size:12px}
+@media(max-width:820px){.app-screen-list,.app-calendar{padding-bottom:105px}.archive-head h1,.calendar-app-head h1{font-size:31px}.archive-formats{grid-template-columns:repeat(2,1fr)}.archive-row{grid-template-columns:45px minmax(0,1fr) auto;gap:9px}.archive-row img,.archive-icon{width:45px;height:48px}.archive-row em{grid-column:2;font-size:10px}.archive-delete{grid-column:3;grid-row:1/3}.calendar-app-head{display:block}.calendar-month-nav{margin-top:15px;width:max-content}.calendar-app-stats{grid-template-columns:1fr;gap:9px}.calendar-app-stat{padding:14px}.calendar-app-stat b{font-size:23px}.calendar-app-layout{grid-template-columns:1fr}.calendar-app-day{min-height:53px;padding:6px}.calendar-app-weekdays,.calendar-app-days{gap:4px}.calendar-app-grid{padding:12px}.calendar-app-events{padding:14px}}
+</style>
+
+<script>
+/* Robust controller for the three independent screens. */
+(()=>{
+  const appFormats=['Digital 2D','IMAX','ScreenX','4DX','Dolby VISION + ATMOS'];
+  const appMonths=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const appWeeks=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const appEscape=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  let activeAppScreen='home',archiveFilter='all',archiveExpanded=false,appMonth=new Date();
+  const appMovies=()=>Array.isArray(a)?[...a].sort((left,right)=>Date.parse(`${right.date||''}T${right.showtime||'00:00'}`)-Date.parse(`${left.date||''}T${left.showtime||'00:00'}`)):[];
+  const appPosters=()=>Array.isArray(posterData)?[...posterData].sort((left,right)=>String(right.date||'').localeCompare(String(left.date||''))):[];
+  const appPanel=()=>document.querySelector('#filmAppPage');
+  const ensureAppPanel=()=>{let panel=appPanel();if(!panel){panel=document.createElement('main');panel.id='filmAppPage';document.body.append(panel)}return panel};
+  const appDelete=(type,index)=>{
+    if(type==='movie'){const movie=a[index];if(movie?.posterId)posterData=posterData.filter(poster=>poster.posterId!==movie.posterId);a.splice(index,1);localStorage.setItem('film-log-red-v3',JSON.stringify(a));localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData))}
+    else {posterData.splice(index,1);localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData))}
+    r();
+    if(activeAppScreen==='records')renderArchive();
+    if(activeAppScreen==='calendar')renderCalendar();
+  };
+  const renderArchive=()=>{
+    const panel=ensureAppPanel(),movies=appMovies(),posters=appPosters();
+    const rows=[...movies.map(movie=>({type:'movie',index:a.indexOf(movie),title:movie.title,date:movie.date,time:movie.showtime,format:movie.format,image:movie.tmdbPoster||movie.poster||''})),...posters.map(poster=>({type:'poster',index:posterData.indexOf(poster),title:poster.title||'โปสเตอร์สะสม',date:poster.date,time:'',format:poster.format,image:''}))];
+    const filtered=archiveFilter==='movies'?rows.filter(row=>row.type==='movie'):archiveFilter==='posters'?rows.filter(row=>row.type==='poster'):rows;
+    const shown=archiveExpanded?filtered:filtered.slice(0,3);
+    const rowMarkup=shown.length?shown.map(row=>`<article class="archive-row">${row.image?`<img src="${appEscape(row.image)}" alt="">`:`<div class="archive-icon">${row.type==='movie'?'◆':'▧'}</div>`}<div><b>${appEscape(row.title||'ไม่ระบุชื่อหนัง')}</b><small>${row.type==='movie'?'หนังที่ดู':'โปสเตอร์ที่ได้รับ'} · ${appEscape(row.date||'ไม่ระบุวันที่')}${row.time?' · '+appEscape(row.time):''}</small></div><em>${appEscape(row.format||'Digital 2D')}</em><button type="button" class="archive-delete" data-app-delete="${row.type}:${row.index}">ลบ</button></article>`).join(''):'<div class="app-empty">ยังไม่มีข้อมูลในหมวดนี้</div>';
+    const tab=(value,label,count)=>`<button type="button" class="${archiveFilter===value?'active':''}" data-app-filter="${value}">${label} ${count}</button>`;
+    const formatMarkup=appFormats.map(format=>`<div class="archive-format"><b>${format}</b><small>${posters.filter(poster=>poster.format===format).length} ใบ</small></div>`).join('');
+    panel.innerHTML=`<section class="app-screen-list"><section class="archive-poster-summary"><div><p class="archive-kicker">POSTER COLLECTION</p><h2>โปสเตอร์ในระบบ</h2><small>สรุปจำนวนโปสเตอร์ที่ได้รับ แยกตามระบบฉาย</small></div><div class="archive-poster-counts">${formatMarkup}</div></section><header class="archive-head"><div><p class="archive-kicker">YOUR ARCHIVE</p><h1>รายการทั้งหมด</h1><span class="archive-count">${rows.length} รายการ</span></div><button type="button" class="archive-add" data-app-add>＋ เพิ่มหนัง</button></header><div class="archive-box"><div class="archive-tabs">${tab('all','ทั้งหมด',rows.length)}${tab('movies','หนังที่ดู',movies.length)}${tab('posters','โปสเตอร์',posters.length)}</div><div class="archive-list">${rowMarkup}${filtered.length>3?`<button type="button" class="archive-more" data-app-more>${archiveExpanded?'ย่อรายการ':'ดูเพิ่มเติม'}</button>`:''}</div></div></section>`;
+  };
+  const renderCalendar=()=>{
+    const panel=ensureAppPanel(),year=appMonth.getFullYear(),month=appMonth.getMonth(),movies=appMovies();
+    const entries=movies.filter(movie=>{const date=new Date(`${movie.date||''}T00:00:00`);return date.getFullYear()===year&&date.getMonth()===month});
+    const counts=entries.reduce((map,movie)=>{const day=Number(String(movie.date||'').slice(-2));if(day)map.set(day,(map.get(day)||0)+1);return map},new Map());
+    const first=new Date(year,month,1).getDay(),totalDays=new Date(year,month+1,0).getDate(),previousDays=new Date(year,month,0).getDate(),today=new Date(),days=[];
+    for(let cell=0;cell<42;cell++){const current=cell-first+1;let label=current,klass='calendar-app-day',count=0;if(current<1){label=previousDays+current;klass+=' out'}else if(current>totalDays){label=current-totalDays;klass+=' out'}else{count=counts.get(current)||0;if(count)klass+=' has';if(today.getFullYear()===year&&today.getMonth()===month&&today.getDate()===current)klass+=' today'}days.push(`<div class="${klass}">${label}${count?`<span>${count}</span>`:''}</div>`)}
+    const eventMarkup=entries.length?entries.map(movie=>`<article class="calendar-app-event"><div class="calendar-app-event-date">${Number(String(movie.date||'').slice(-2))}</div><div><b>${appEscape(movie.title||'ไม่ระบุชื่อหนัง')}</b><small>${appEscape(movie.showtime||'--:--')} · ${appEscape(movie.format||'Digital 2D')}</small></div></article>`).join(''):'<div class="app-empty">เดือนนี้ยังไม่มีรายการหนัง</div>';
+    panel.innerHTML=`<section class="app-calendar"><header class="calendar-app-head"><div><p class="archive-kicker">WATCH CALENDAR</p><h1>ปฏิทิน</h1><p>วันที่มีจุดสีส้ม คือวันที่คุณดูหนังในเดือนที่เลือก</p></div><div class="calendar-month-nav"><button type="button" data-app-month="-1">‹</button><b>${appMonths[month]} ${year}</b><button type="button" data-app-month="1">›</button></div></header><div class="calendar-app-stats"><article class="calendar-app-stat"><small>ดูเดือนนี้</small><b>${entries.length} เรื่อง</b></article><article class="calendar-app-stat"><small>ดูเดือนนี้กี่วัน</small><b>${counts.size} วัน</b></article><article class="calendar-app-stat"><small>วันดูล่าสุด</small><b>${entries[0]?.date?String(entries[0].date).slice(-2)+' '+appMonths[month].slice(0,3):'—'}</b></article></div><div class="calendar-app-layout"><section class="calendar-app-grid"><div class="calendar-app-weekdays">${appWeeks.map(day=>`<span>${day}</span>`).join('')}</div><div class="calendar-app-days">${days.join('')}</div></section><aside class="calendar-app-events"><h2>รายการเดือน${appMonths[month]}</h2>${eventMarkup}</aside></div></section>`;
+  };
+  const navigateApp=target=>{
+    activeAppScreen=target;
+    const panel=ensureAppPanel(),hero=document.querySelector('.hero'),main=document.querySelector('.main');
+    document.querySelectorAll('#filmSidebar [data-film-page]').forEach(button=>button.classList.toggle('active',button.dataset.filmPage===target));
+    if(hero)hero.hidden=target!=='home';if(main)main.hidden=true;panel.hidden=target==='home';
+    if(target==='records')renderArchive();if(target==='calendar')renderCalendar();
+    window.scrollTo(0,0);
+  };
+  document.addEventListener('click',event=>{
+    const menu=event.target.closest('#filmSidebar [data-film-page]');
+    if(menu){event.preventDefault();event.stopPropagation();navigateApp(menu.dataset.filmPage);return}
+    const target=event.target.closest('[data-app-filter],[data-app-more],[data-app-add],[data-app-delete],[data-app-month]');if(!target)return;
+    if(target.dataset.appFilter){archiveFilter=target.dataset.appFilter;archiveExpanded=false;renderArchive()}
+    if(target.hasAttribute('data-app-more')){archiveExpanded=!archiveExpanded;renderArchive()}
+    if(target.hasAttribute('data-app-add'))document.querySelector('#d')?.showModal();
+    if(target.dataset.appDelete){const [type,index]=target.dataset.appDelete.split(':');appDelete(type,Number(index))}
+    if(target.dataset.appMonth){appMonth=new Date(appMonth.getFullYear(),appMonth.getMonth()+Number(target.dataset.appMonth),1);renderCalendar()}
+  },true);
+  window.filmAppNavigate=navigateApp;
+  window.filmAppRenderArchive=renderArchive;
+  window.filmAppRenderCalendar=renderCalendar;
+  const beforeFinalScreens=r;
+  r=function(){beforeFinalScreens();if(activeAppScreen==='records')renderArchive();if(activeAppScreen==='calendar')renderCalendar();};
+  navigateApp('home');
+})();
+</script>
+
+<style>
+/* Home screen — scrollable movie-ticket collection. */
+.hero.ticket-home{
+  min-height:100vh!important;
+  padding:26px 7vw 52px!important;
+  border-radius:0!important;
+  background:
+    radial-gradient(circle at 12% 15%,#ff5a1f25,transparent 26%),
+    radial-gradient(circle at 86% 56%,#2165a925,transparent 30%),
+    #080808!important;
+}
+.ticket-home .body{display:none!important}
+.ticket-home .tmdb-poster,.ticket-home .tmdb-backdrop{display:none!important}
+.ticket-home .nav{max-width:1240px;margin:0 auto}
+.ticket-home .nav button{box-shadow:0 8px 24px #0008}
+.ticket-home-content{position:relative;z-index:2;max-width:1240px;margin:52px auto 0}
+.ticket-home-top{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:22px}
+.ticket-home-kicker{position:relative;z-index:1;margin:0 0 14px;color:#ff6a35;font-size:11px;font-weight:700;line-height:1.3;letter-spacing:.16em}
+.ticket-home-title{margin:0;font-size:clamp(36px,5vw,68px);letter-spacing:-.015em;line-height:1.08;white-space:nowrap}
+.ticket-home-copy{max-width:330px;margin:0;color:#aaa;font-size:13px;line-height:1.6;text-align:right}
+.ticket-summary{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 26px}
+.ticket-summary span{font-size:11px;color:#aaa}.ticket-summary b{color:#fff;font-size:17px;margin-right:5px}
+.ticket-rail-wrap{position:relative}
+.ticket-rail{display:flex;gap:24px;overflow-x:auto;padding:4px 4px 22px;scroll-snap-type:x mandatory;scroll-padding-left:4px;scrollbar-width:thin;scrollbar-color:#ff5a1f66 transparent}
+.ticket-rail::-webkit-scrollbar{height:7px}.ticket-rail::-webkit-scrollbar-thumb{background:#ff5a1f88;border-radius:99px}
+.movie-ticket{position:relative;flex:0 0 clamp(300px,29vw,380px);min-height:640px;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#f8f7f3;color:#121212;box-shadow:0 22px 50px #0009}
+.ticket-art{height:315px;position:relative;overflow:hidden;background:linear-gradient(150deg,#292929,#0c0c0c)}
+.ticket-art img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.86) contrast(1.04)}
+.ticket-art:after{content:'';position:absolute;inset:auto 0 0;height:54%;background:linear-gradient(transparent,#f8f7f3 96%)}
+.ticket-art-fallback{width:100%;height:100%;display:grid;place-items:center;padding:30px;text-align:center;background:linear-gradient(140deg,#40332d,#111);color:#fff;font-size:29px;font-weight:700;line-height:1.05}
+.ticket-title{min-height:103px;padding:7px 28px 20px;display:flex;flex-direction:column;justify-content:flex-end;position:relative;z-index:1}
+.ticket-title h2{margin:0;font-size:26px;line-height:1.04;letter-spacing:-.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket-title p{margin:5px 0 0;color:#949494;font-size:11px;font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket-seam{height:16px;border-top:2px dashed #bebdb8;position:relative}
+.ticket-seam:before,.ticket-seam:after{content:'';position:absolute;top:-12px;width:22px;height:22px;border-radius:50%;background:#080808}.ticket-seam:before{left:-11px}.ticket-seam:after{right:-11px}
+.ticket-info{padding:21px 28px 24px;display:grid;grid-template-columns:1fr 1fr;gap:19px 24px}
+.ticket-field small{display:block;color:#5f5d59;font-size:9px;letter-spacing:.14em;margin-bottom:4px}.ticket-field strong{display:block;font-size:14px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ticket-score{color:#f35c2a!important;letter-spacing:.08em;font-size:17px!important}
+.ticket-foot{grid-column:1/-1;display:flex;align-items:end;justify-content:space-between;margin-top:3px;padding-top:17px;border-top:1px dashed #c8c6c0}
+.ticket-id small{display:block;color:#5f5d59;font-size:9px;letter-spacing:.13em}.ticket-id b{display:block;margin-top:4px;letter-spacing:.12em;font-size:10px}
+.ticket-code{display:block;width:62px;height:62px;overflow:hidden;padding:3px;background:#fff;border:1px solid #d8d5cf;border-radius:10px;box-shadow:0 2px 5px #00000012}.ticket-code img{display:block;width:100%;height:100%;border-radius:5px;object-fit:contain;image-rendering:auto}
+.ticket-empty{width:min(100%,430px);padding:54px 34px;border:1px dashed #ffffff44;border-radius:22px;background:#ffffff07;color:#aaa;text-align:center}.ticket-empty b{display:block;color:#fff;font-size:20px;margin-bottom:8px}.ticket-empty button{margin-top:18px;border:0;border-radius:99px;padding:11px 16px;background:#fff;color:#111;font:700 12px Prompt,sans-serif;cursor:pointer}
+.ticket-scroll-buttons{position:absolute;right:3px;top:-50px;display:flex;gap:8px}.ticket-scroll-buttons button{width:34px;height:34px;border:1px solid #ffffff44;border-radius:50%;background:#151515;color:#fff;cursor:pointer;font-size:18px}.ticket-scroll-buttons button:hover{background:#ff5a1f;border-color:#ff5a1f}
+@media(max-width:650px){
+  .hero.ticket-home{padding:20px 18px 42px!important;min-height:100svh!important}
+  .ticket-home-content{margin-top:35px}
+  .ticket-home-top{display:block;margin-bottom:20px}.ticket-home-title{padding-top:2px;font-size:clamp(32px,9.2vw,40px);letter-spacing:-.01em;line-height:1.1}.ticket-home-copy{text-align:left;margin-top:12px;font-size:12px}
+  .ticket-summary{gap:13px;margin:17px 0 19px}
+  .ticket-rail{gap:16px;margin:0 -4px;padding:4px 4px 20px}
+  .movie-ticket{flex-basis:calc(100vw - 44px);min-height:618px;border-radius:20px}
+  .ticket-art{height:294px}.ticket-title{padding-left:23px;padding-right:23px}.ticket-title h2{font-size:23px}.ticket-info{padding:19px 23px 22px;gap:17px}.ticket-scroll-buttons{display:none}
+}
+</style>
+
+<script>
+/* Render all saved movies as swipeable ticket cards on the home screen. */
+(()=>{
+  const escapeTicketText=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  const ticketId=(movie,ordinal)=>{
+    const match=String(movie.date||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    const dateCode=match?`${match[3]}${match[2]}${match[1]}`:'NO-DATE';
+    return `FLM-${dateCode}-${String(ordinal).padStart(3,'0')}`;
+  };
+  const ticketQrUrl='https://api.qrserver.com/v1/create-qr-code/?size=160x160&format=svg&data='+encodeURIComponent('https://www.instagram.com/termnang/');
+  const ticketDate=value=>{
+    if(!value)return 'ไม่ระบุวันที่';
+    const [year,month,day]=String(value).split('-');
+    return year&&month&&day?`${day}/${month}/${year}`:value;
+  };
+  const ticketCard=(movie,index,orderedMovies)=>{
+    const title=escapeTicketText(movie.title||'หนังที่บันทึกไว้');
+    const art=movie.tmdbPoster||movie.poster||movie.tmdbBackdrop||'';
+    const artMarkup=art?`<img src="${escapeTicketText(art)}" alt="โปสเตอร์ ${title}">`:`<div class="ticket-art-fallback">${title}</div>`;
+    const stars='★'.repeat(Math.max(0,Math.min(5,Number(movie.rating)||0)))+'☆'.repeat(Math.max(0,5-(Number(movie.rating)||0)));
+    return `<article class="movie-ticket" aria-label="ตั๋วหนัง ${title}">
+      <div class="ticket-art">${artMarkup}</div>
+      <div class="ticket-title"><h2 title="${title}">${title}</h2><p>${movie.hasPoster==='yes'?'ได้รับโปสเตอร์แล้ว':'บันทึกความทรงจำบนจอ'}</p></div>
+      <div class="ticket-seam" aria-hidden="true"></div>
+      <div class="ticket-info">
+        <div class="ticket-field"><small>DATE</small><strong>${ticketDate(movie.date)}</strong></div>
+        <div class="ticket-field"><small>TIME</small><strong>${escapeTicketText(movie.showtime||'--:--')}</strong></div>
+        <div class="ticket-field"><small>CINEMA FORMAT</small><strong>${escapeTicketText(movie.format||'Digital 2D')}</strong></div>
+        <div class="ticket-field"><small>RATING</small><strong class="ticket-score">${stars}</strong></div>
+        <div class="ticket-foot"><div class="ticket-id"><small>TICKET ID</small><b>${ticketId(movie,orderedMovies.length-index)}</b></div><a class="ticket-code" href="${ticketQrUrl}" target="_blank" rel="noopener noreferrer" aria-label="QR Code ไปยัง Instagram Term Nang"><img src="${ticketQrUrl}" alt="QR Code ไปยัง Instagram Term Nang"></a></div>
+      </div>
+    </article>`;
+  };
+  const renderTicketHome=()=>{
+    const hero=document.querySelector('.hero');
+    if(!hero)return;
+    hero.classList.add('ticket-home');
+    let content=document.querySelector('#ticketHome');
+    if(!content){
+      content=document.createElement('section');
+      content.id='ticketHome';
+      content.className='ticket-home-content';
+      hero.append(content);
+    }
+    const movies=Array.isArray(a)?[...a].sort((left,right)=>Date.parse(`${right.date||''}T${right.showtime||'00:00'}`)-Date.parse(`${left.date||''}T${left.showtime||'00:00'}`)):[];
+    const cards=movies.length?movies.map(ticketCard).join(''):`<div class="ticket-empty"><b>ยังไม่มีตั๋วหนัง</b><span>เพิ่มหนังเรื่องแรก เพื่อเริ่มสะสมตั๋วของคุณ</span><br><button type="button" data-open-ticket-form>＋ เพิ่มหนัง</button></div>`;
+    const posterCount=Array.isArray(posterData)?posterData.length:0;
+    content.innerHTML=`<div class="ticket-home-top"><div><p class="ticket-home-kicker">MY MOVIE TICKETS</p><h1 class="ticket-home-title">ตั๋วหนังของฉัน</h1></div><p class="ticket-home-copy">เลื่อนเพื่อเปิดดูตั๋วของหนังทุกเรื่องที่คุณเคยบันทึกไว้</p></div><div class="ticket-summary"><span><b>${movies.length}</b> ตั๋วทั้งหมด</span><span><b>${movies.filter(movie=>(movie.date||'').startsWith(String(new Date().getFullYear()))).length}</b> เรื่องที่ดูปีนี้</span><span><b>${posterCount}</b> โปสเตอร์</span></div><div class="ticket-rail-wrap"><div class="ticket-scroll-buttons" aria-label="เลื่อนตั๋ว"><button type="button" data-ticket-scroll="prev" aria-label="ตั๋วก่อนหน้า">←</button><button type="button" data-ticket-scroll="next" aria-label="ตั๋วถัดไป">→</button></div><div id="ticketRail" class="ticket-rail" aria-label="รายการตั๋วหนัง">${cards}</div></div>`;
+    content.querySelector('[data-open-ticket-form]')?.addEventListener('click',()=>document.querySelector('#d')?.showModal());
+    content.querySelectorAll('[data-ticket-scroll]').forEach(button=>button.addEventListener('click',()=>{
+      const rail=content.querySelector('#ticketRail');
+      rail?.scrollBy({left:(button.dataset.ticketScroll==='next'?1:-1)*(rail.clientWidth*.84),behavior:'smooth'});
+    }));
+  };
+  const renderBeforeTickets=r;
+  r=function(){renderBeforeTickets();renderTicketHome();};
+  window.renderTicketHome=renderTicketHome;
+  renderTicketHome();
+})();
+</script>
 <script>
 const markMovieRecordParts=r;
 r=function(){markMovieRecordParts();document.querySelectorAll('#records .record').forEach(el=>{const d=el.querySelectorAll(':scope > div');if(d[0])d[0].classList.add('movie-meta');if(d[1])d[1].classList.add('movie-format');if(d[2])d[2].classList.add('movie-actions')})};r();
@@ -514,3 +813,234 @@ try{
   #d .radios input:checked{border:5px solid var(--o)!important;background:#fff!important}
 }
 </style>
+
+<script>
+/* Keep the ticket home synchronized after every existing render, including cloud sync. */
+(()=>{
+  const renderBeforeTicketRefresh=r;
+  r=function(){renderBeforeTicketRefresh();window.renderTicketHome?.();};
+  window.renderTicketHome?.();
+})();
+</script>
+
+<style>
+/* Use the most recently saved movie's backdrop behind the ticket collection. */
+.hero.ticket-home.has-tmdb-poster .tmdb-backdrop{
+  display:block!important;
+  visibility:visible!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:0!important;
+  opacity:.48!important;
+  background-position:center!important;
+  background-size:cover!important;
+  background-repeat:no-repeat!important;
+  pointer-events:none!important;
+}
+.hero.ticket-home.has-tmdb-poster .tmdb-backdrop:after{
+  background:linear-gradient(90deg,#080808e8 0%,#080808ad 42%,#08080875 100%),linear-gradient(0deg,#080808e8 0%,transparent 58%,#08080894 100%)!important;
+}
+/* Keep the old standalone poster out of the background; posters belong on tickets. */
+.hero.ticket-home.has-tmdb-poster .tmdb-poster{display:none!important;visibility:hidden!important;opacity:0!important}
+/* The initial desktop view shows only complete tickets; the rest stay available by scrolling. */
+@media(min-width:1001px){.ticket-rail .movie-ticket{flex-basis:calc((100% - 48px)/3)!important}}
+@media(min-width:651px) and (max-width:1000px){.ticket-rail .movie-ticket{flex-basis:calc((100% - 24px)/2)!important}}
+</style>
+
+<style>
+/* Application sidebar and the record/calendar pages. */
+body.has-film-sidebar{background:#08090f}
+#filmSidebar{position:fixed;inset:0 auto 0 0;z-index:30;width:246px;padding:28px 18px;background:linear-gradient(180deg,#17142f 0%,#0b0b16 51%,#08090f 100%);border-right:1px solid #ffffff10;color:#eaeaff}
+.film-side-brand{display:flex;align-items:center;gap:10px;margin:0 9px 31px;font-size:20px;font-weight:700;letter-spacing:-.04em}.film-side-brand img{display:block;flex:0 0 auto;width:28px;height:28px;border-radius:7px;object-fit:cover}.film-side-brand i{display:grid;place-items:center;width:25px;height:25px;border-radius:8px;background:#7963f0;color:#151127;font-size:14px;font-style:normal;transform:rotate(-7deg)}
+.film-side-label{display:block;margin:0 9px 9px;color:#817fa0;font-size:10px;font-weight:700;letter-spacing:.08em}.film-side-menu{display:grid;gap:4px}
+.film-side-menu button{width:100%;display:flex;align-items:center;gap:12px;border:0;border-radius:10px;padding:11px 12px;background:transparent;color:#bfc0d6;text-align:left;font:600 13px Prompt,sans-serif;cursor:pointer;transition:background .18s,color .18s}.film-side-menu button i{width:17px;font-size:17px;font-style:normal;text-align:center;line-height:1}.film-side-menu button:hover{background:#ffffff0c;color:#fff}.film-side-menu button.active{background:#6759d440;color:#d8d1ff}
+#filmAppPage{min-height:100vh;padding:44px 6vw 70px;background:#0f172b;color:#f3f6ff}.film-page-header{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:23px}.film-page-kicker{margin:0 0 5px;color:#9589fb;font-size:11px;font-weight:700;letter-spacing:.12em}.film-page-header h1{margin:0;font-size:39px;line-height:1;letter-spacing:-.05em}.film-page-copy{max-width:360px;margin:0;color:#91a1bd;font-size:12px;line-height:1.6;text-align:right}
+.film-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:16px}.film-stat-card{min-height:102px;padding:18px;border-radius:17px;background:#1c2941;border:1px solid #ffffff0c}.film-stat-card:nth-child(1){background:#6555df}.film-stat-card:nth-child(2){background:#bfe8e1;color:#071525}.film-stat-card:nth-child(3){background:#ffc858;color:#231a02}.film-stat-card small{display:block;font-size:10px;font-weight:600;opacity:.76}.film-stat-card b{display:block;margin-top:5px;font-size:28px;line-height:1;letter-spacing:-.04em}
+.film-record-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.film-panel{border:1px solid #ffffff12;border-radius:18px;background:#17223a;padding:20px}.film-panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 0 14px;font-size:16px}.film-panel-title span{color:#8493ad;font-size:11px;font-weight:400}.film-record-list{display:grid;gap:9px}.film-record-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto;align-items:center;gap:11px;padding:7px;border-radius:12px;background:#ffffff06}.film-record-row img,.film-record-placeholder{width:44px;height:52px;border-radius:8px;object-fit:cover;background:#252f46}.film-record-placeholder{display:grid;place-items:center;color:#9b99e9;font-size:18px}.film-record-row b{display:block;color:#f5f7ff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.film-record-row small{display:block;margin-top:3px;color:#8c9bb4;font-size:10px}.film-record-row em{color:#c7d2e8;font-size:10px;font-style:normal;text-align:right}.film-page-empty{padding:28px 15px;border:1px dashed #ffffff22;border-radius:12px;color:#8c9bb4;font-size:12px;text-align:center}
+.calendar-toolbar{display:flex;justify-content:flex-end;margin:-4px 0 15px}.calendar-nav{display:flex;align-items:center;gap:8px;padding:6px;border:1px solid #ffffff1d;border-radius:10px;background:#1b2941}.calendar-nav button{width:30px;height:30px;border:0;border-radius:7px;background:transparent;color:#dce7ff;font-size:18px;cursor:pointer}.calendar-nav button:hover{background:#ffffff15}.calendar-nav b{min-width:126px;color:#dce7ff;font-size:12px;text-align:center}
+.calendar-layout{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(250px,.85fr);gap:16px}.calendar-grid-wrap{padding:18px;border:1px solid #ffffff12;border-radius:18px;background:#17223a}.calendar-weekdays,.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.calendar-weekdays{margin-bottom:9px;color:#90a2bf;font-size:10px;text-align:center}.calendar-cell{position:relative;min-height:72px;padding:8px;border-radius:10px;background:#ffffff02;color:#d8e0ef;font-size:11px}.calendar-cell.outside{color:#4d5a70}.calendar-cell.today{outline:1px solid #9a8aff}.calendar-cell.has-movie{background:#6858df34}.calendar-cell .calendar-dot{position:absolute;left:8px;bottom:8px;display:grid;place-items:center;min-width:19px;height:19px;padding:0 5px;border-radius:99px;background:#7868ef;color:#fff;font-size:9px;font-weight:700}.calendar-key{margin:15px 0 0;color:#8d9db8;font-size:10px}.calendar-month-list{padding:19px;border:1px solid #ffffff12;border-radius:18px;background:#17223a}.calendar-month-list h2{margin:0 0 12px;font-size:16px}.calendar-entry{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff10}.calendar-entry:last-child{border-bottom:0}.calendar-entry-date{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:10px;background:#6758de;color:#fff;font-size:12px;font-weight:700}.calendar-entry b{display:block;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.calendar-entry small{display:block;margin-top:2px;color:#8c9bb4;font-size:10px}
+@media(min-width:821px){body.has-film-sidebar{padding-left:246px}.has-film-sidebar .hero.ticket-home,.has-film-sidebar .main{margin-left:0!important}.has-film-sidebar #filmAppPage{margin-left:0}}
+@media(max-width:820px){body.has-film-sidebar{padding-top:61px}#filmSidebar{right:0;bottom:auto;width:100%;height:61px;padding:0 12px;display:flex;align-items:center;gap:10px;background:#121126ed;backdrop-filter:blur(16px);border-right:0;border-bottom:1px solid #ffffff12}.film-side-brand{flex:0 0 auto;margin:0;font-size:15px}.film-side-brand img{width:20px;height:20px;border-radius:5px}.film-side-brand i{width:20px;height:20px;font-size:11px}.film-side-label{display:none}.film-side-menu{display:flex;gap:3px;overflow-x:auto}.film-side-menu button{flex:0 0 auto;gap:5px;padding:8px 9px;font-size:11px}.film-side-menu button i{font-size:14px;width:auto}#filmAppPage{padding:28px 18px 45px}.film-page-header{display:block;margin-bottom:18px}.film-page-header h1{font-size:31px}.film-page-copy{text-align:left;margin-top:8px}.film-stat-row{grid-template-columns:1fr;gap:9px}.film-stat-card{min-height:72px;padding:14px}.film-stat-card b{font-size:23px}.film-record-grid,.calendar-layout{grid-template-columns:1fr}.calendar-toolbar{justify-content:flex-start}.calendar-cell{min-height:53px;padding:6px}.calendar-cell .calendar-dot{left:6px;bottom:6px}.calendar-weekdays,.calendar-grid{gap:4px}.calendar-grid-wrap{padding:12px}}
+</style>
+
+<script>
+/* Sidebar navigation: home tickets, complete record list, and a month calendar. */
+(()=>{
+  const monthNames=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const weekNames=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const esc=value=>String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char]));
+  let calendarCursor=new Date();
+  let currentFilmPage='home';
+  let recordFilter='all';
+  const installFilmApp=()=>{
+    if(document.querySelector('#filmSidebar'))return;
+    document.body.classList.add('has-film-sidebar');
+    const sidebar=document.createElement('aside');
+    sidebar.id='filmSidebar';
+    sidebar.innerHTML='<div class="film-side-brand"><img src="term-nang-logo.png" alt="TermNang logo"><span>TermNang</span></div><div><span class="film-side-label">เมนูหลัก</span><nav class="film-side-menu" aria-label="เมนูหลัก"><button type="button" class="active" data-film-page="home"><i>⌂</i>หน้าแรก</button><button type="button" data-film-page="records"><i>☷</i>รายการ</button><button type="button" data-film-page="calendar"><i>◫</i>ปฏิทิน</button></nav></div>';
+    document.body.prepend(sidebar);
+    const page=document.createElement('main');
+    page.id='filmAppPage';
+    page.hidden=true;
+    document.body.append(page);
+    sidebar.querySelectorAll('[data-film-page]').forEach(button=>button.addEventListener('click',()=>setFilmPage(button.dataset.filmPage)));
+  };
+  const setFilmPage=pageName=>{
+    installFilmApp();
+    currentFilmPage=pageName;
+    const page=document.querySelector('#filmAppPage');
+    const hero=document.querySelector('.hero'),main=document.querySelector('.main');
+    document.querySelectorAll('[data-film-page]').forEach(button=>button.classList.toggle('active',button.dataset.filmPage===pageName));
+    const isHome=pageName==='home';
+    if(hero)hero.hidden=!isHome;
+    if(main)main.hidden=true;
+    page.hidden=isHome;
+    if(pageName==='records')renderFilmRecords();
+    if(pageName==='calendar')renderFilmCalendar();
+    window.scrollTo({top:0,behavior:'smooth'});
+  };
+  const recordImage=movie=>{
+    const src=movie.tmdbPoster||movie.poster||'';
+    return src?`<img src="${esc(src)}" alt="">`:'<div class="film-record-placeholder">◆</div>';
+  };
+  const sortedMovies=()=>Array.isArray(a)?[...a].sort((left,right)=>Date.parse(`${right.date||''}T${right.showtime||'00:00'}`)-Date.parse(`${left.date||''}T${left.showtime||'00:00'}`)):[];
+  const renderFilmRecords=()=>{
+    const page=document.querySelector('#filmAppPage');if(!page)return;
+    const movies=sortedMovies(),posters=Array.isArray(posterData)?[...posterData].sort((left,right)=>String(right.date||'').localeCompare(String(left.date||''))):[];
+    const movieRows=movies.map(movie=>`<article class="film-record-row">${recordImage(movie)}<div><b>${esc(movie.title||'ไม่ระบุชื่อหนัง')}</b><small>หนังที่ดู · ${esc(movie.date||'ไม่ระบุวันที่')} · ${esc(movie.showtime||'--:--')}</small></div><em>${esc(movie.format||'Digital 2D')}</em></article>`);
+    const posterRows=posters.map(poster=>`<article class="film-record-row"><div class="film-record-placeholder">▧</div><div><b>${esc(poster.title||'โปสเตอร์สะสม')}</b><small>โปสเตอร์ที่ได้รับ · ${esc(poster.date||'ไม่ระบุวันที่')}</small></div><em>${esc(poster.format||'Digital 2D')}</em></article>`);
+    const allRows=[...movieRows,...posterRows];
+    const selectedRows=recordFilter==='movies'?movieRows:recordFilter==='posters'?posterRows:allRows;
+    const active=name=>recordFilter===name?'active':'';
+    page.innerHTML=`<header class="film-page-header film-record-header"><div><p class="film-page-kicker">YOUR ARCHIVE</p><h1>รายการทั้งหมด</h1><span class="film-record-count">${allRows.length} รายการ</span></div><button type="button" class="film-add-record" data-open-record-form>＋ เพิ่มหนัง</button></header><section class="film-record-workspace"><div class="film-record-toolbar"><div class="film-record-tabs"><button class="${active('all')}" type="button" data-record-filter="all">ทั้งหมด ${allRows.length}</button><button class="${active('movies')}" type="button" data-record-filter="movies">หนังที่ดู ${movies.length}</button><button class="${active('posters')}" type="button" data-record-filter="posters">โปสเตอร์ ${posters.length}</button></div><span class="film-record-sort">ใหม่ล่าสุด</span></div><div class="film-unified-record-list">${selectedRows.length?selectedRows.join(''):'<div class="film-page-empty">ยังไม่มีข้อมูลในหมวดนี้</div>'}</div></section>`;
+    page.querySelector('[data-open-record-form]')?.addEventListener('click',()=>document.querySelector('#d')?.showModal());
+    page.querySelectorAll('[data-record-filter]').forEach(button=>button.addEventListener('click',()=>{recordFilter=button.dataset.recordFilter;renderFilmRecords()}));
+  };
+  const renderFilmCalendar=()=>{
+    const page=document.querySelector('#filmAppPage');if(!page)return;
+    const year=calendarCursor.getFullYear(),month=calendarCursor.getMonth();
+    const movies=sortedMovies();
+    const monthMovies=movies.filter(movie=>{const value=new Date(`${movie.date||''}T00:00:00`);return !Number.isNaN(value)&&value.getFullYear()===year&&value.getMonth()===month;});
+    const activity=monthMovies.reduce((map,movie)=>{const day=Number(String(movie.date||'').slice(-2));if(day)map.set(day,(map.get(day)||0)+1);return map},new Map());
+    const start=new Date(year,month,1),firstDay=start.getDay(),days=new Date(year,month+1,0).getDate(),previousDays=new Date(year,month,0).getDate();
+    const today=new Date(),cells=[];
+    for(let cell=0;cell<42;cell++){
+      const day=cell-firstDay+1;let label=day,classes='calendar-cell',count=0;
+      if(day<1){label=previousDays+day;classes+=' outside'}else if(day>days){label=day-days;classes+=' outside'}else{count=activity.get(day)||0;if(count)classes+=' has-movie';if(today.getFullYear()===year&&today.getMonth()===month&&today.getDate()===day)classes+=' today'}
+      cells.push(`<div class="${classes}"><span>${label}</span>${count?`<b class="calendar-dot">${count}</b>`:''}</div>`);
+    }
+    const entries=monthMovies.length?monthMovies.map(movie=>`<article class="calendar-entry"><div class="calendar-entry-date">${Number(String(movie.date||'').slice(-2))}</div><div><b>${esc(movie.title||'ไม่ระบุชื่อหนัง')}</b><small>${esc(movie.showtime||'--:--')} · ${esc(movie.format||'Digital 2D')}</small></div></article>`).join(''):'<div class="film-page-empty">เดือนนี้ยังไม่มีรายการหนัง</div>';
+    page.innerHTML=`<header class="film-page-header"><div><p class="film-page-kicker">WATCH CALENDAR</p><h1>ปฏิทิน</h1></div><p class="film-page-copy">วันที่มีจุดสีส้ม คือวันที่คุณดูหนังในเดือนที่เลือก</p></header><div class="calendar-toolbar"><div class="calendar-nav"><button type="button" data-calendar-move="-1" aria-label="เดือนก่อนหน้า">‹</button><b>${monthNames[month]} ${year}</b><button type="button" data-calendar-move="1" aria-label="เดือนถัดไป">›</button></div></div><div class="film-stat-row"><article class="film-stat-card"><small>ดูเดือนนี้</small><b>${monthMovies.length} เรื่อง</b></article><article class="film-stat-card"><small>ดูในเดือนนี้กี่วัน</small><b>${activity.size} วัน</b></article><article class="film-stat-card"><small>วันดูล่าสุด</small><b>${monthMovies[0]?.date?String(monthMovies[0].date).slice(-2)+' '+monthNames[month].slice(0,3):'—'}</b></article></div><div class="calendar-layout"><section class="calendar-grid-wrap"><div class="calendar-weekdays">${weekNames.map(day=>`<span>${day}</span>`).join('')}</div><div class="calendar-grid">${cells.join('')}</div><p class="calendar-key">จุดสีส้ม = มีรายการหนังที่ดูในวันนั้น</p></section><aside class="calendar-month-list"><h2>รายการเดือน${monthNames[month]}</h2>${entries}</aside></div>`;
+    page.querySelectorAll('[data-calendar-move]').forEach(button=>button.addEventListener('click',()=>{calendarCursor=new Date(year,month+Number(button.dataset.calendarMove),1);renderFilmCalendar()}));
+  };
+  const refreshFilmApp=()=>{installFilmApp();if(currentFilmPage==='records')renderFilmRecords();if(currentFilmPage==='calendar')renderFilmCalendar();};
+  installFilmApp();
+  window.setFilmPage=setFilmPage;
+  document.addEventListener('click',event=>{
+    const button=event.target.closest('#filmSidebar [data-film-page]');
+    if(!button)return;
+    event.preventDefault();
+    setFilmPage(button.dataset.filmPage);
+  },true);
+  setFilmPage('home');
+  const renderBeforeApp=r;
+  r=function(){renderBeforeApp();refreshFilmApp();};
+})();
+</script>
+
+<style>
+/* Unified Film Log palette: black, white, and orange only. */
+body.has-film-sidebar{background:#080808!important;color:#fff}
+#filmSidebar{background:linear-gradient(180deg,#151515,#080808 72%)!important;border-color:#ffffff16!important}
+.film-side-brand{color:#fff}.film-side-brand i{background:#ff5a1f!important;color:#fff!important}.film-side-label{color:#858585!important}
+.film-side-menu button{color:#bdbdbd!important}.film-side-menu button:hover{background:#ffffff10!important;color:#fff!important}.film-side-menu button.active{background:#ff5a1f!important;color:#fff!important}
+#filmAppPage{background:#080808!important;color:#fff!important}.film-page-kicker{color:#ff5a1f!important}.film-page-header h1{color:#fff!important}.film-page-copy,.film-record-count{color:#aaa!important}
+.film-record-header{align-items:center!important}.film-add-record{border:0;border-radius:12px;padding:11px 15px;background:#fff;color:#111;font:700 12px Prompt,sans-serif;cursor:pointer}.film-add-record:hover{background:#ff5a1f;color:#fff}
+.film-record-workspace,.film-panel,.calendar-grid-wrap,.calendar-month-list{background:#121212!important;border-color:#ffffff1b!important}.film-record-workspace{border:1px solid #ffffff1b;border-radius:18px;overflow:hidden}.film-record-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border-bottom:1px solid #ffffff14;background:#161616}.film-record-tabs{display:flex;gap:5px;flex-wrap:wrap}.film-record-tabs button{border:0;border-radius:8px;padding:9px 11px;background:transparent;color:#aaa;font:600 11px Prompt,sans-serif;cursor:pointer}.film-record-tabs button:hover{color:#fff;background:#ffffff0c}.film-record-tabs button.active{background:#ff5a1f;color:#fff}.film-record-sort{padding:8px 11px;border-radius:8px;background:#ffffff09;color:#ddd;font-size:11px}.film-unified-record-list{display:grid;gap:9px;padding:12px}
+.film-record-row{background:#181818!important;border:1px solid #ffffff0d}.film-record-row img,.film-record-placeholder{background:#252525!important}.film-record-placeholder{color:#ff5a1f!important}.film-record-row b{color:#fff!important}.film-record-row small,.film-record-row em{color:#aaa!important}.film-page-empty{border-color:#ffffff22!important;color:#aaa!important}
+.film-stat-card{background:#171717!important;border-color:#ffffff14!important;color:#fff!important}.film-stat-card:nth-child(1){background:#ff5a1f!important;color:#fff!important}.film-stat-card:nth-child(2){background:#fff!important;color:#111!important}.film-stat-card:nth-child(3){background:#1b1b1b!important;color:#fff!important}
+.calendar-toolbar{margin-top:0!important}.calendar-nav{background:#151515!important;border-color:#ffffff22!important}.calendar-nav button,.calendar-nav b{color:#fff!important}.calendar-nav button:hover{background:#ff5a1f!important}.calendar-weekdays{color:#b7b7b7!important}.calendar-cell{background:#171717!important;color:#eee!important}.calendar-cell.outside{color:#646464!important}.calendar-cell.today{outline-color:#ff5a1f!important}.calendar-cell.has-movie{background:#ff5a1f33!important}.calendar-cell .calendar-dot,.calendar-entry-date{background:#ff5a1f!important;color:#fff!important}.calendar-key,.calendar-entry small{color:#aaa!important}.calendar-month-list h2,.calendar-entry b{color:#fff!important}.calendar-entry{border-color:#ffffff14!important}
+@media(max-width:820px){
+  body.has-film-sidebar{padding-top:0!important;padding-bottom:94px!important}
+  #filmSidebar{top:auto!important;right:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;left:50%!important;width:min(640px,calc(100% - 32px))!important;height:72px!important;padding:7px!important;display:flex!important;align-items:center!important;transform:translateX(-50%)!important;border:1px solid #ffffff24!important;border-radius:38px!important;background:#080808f2!important;box-shadow:0 14px 38px #000c!important;backdrop-filter:blur(16px)}
+  .film-side-brand,.film-side-label{display:none!important}#filmSidebar>div:last-child{display:block!important;flex:1 1 0!important;min-width:0!important;width:100%!important;height:100%!important}.film-side-menu{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));width:100%;height:100%;gap:5px!important;overflow:visible!important}.film-side-menu button{display:flex!important;min-width:0!important;height:100%!important;flex-direction:column!important;justify-content:center!important;align-items:center!important;gap:3px!important;margin:0!important;padding:4px!important;border-radius:30px!important;font-size:10px!important;line-height:1.1;text-align:center}.film-side-menu button i{font-size:18px!important;line-height:1!important}.film-side-menu button.active{background:#ff5a1f!important;color:#fff!important}
+  #filmAppPage{padding:29px 18px 116px!important}.film-record-header{display:flex!important;align-items:center!important}.film-add-record{flex:0 0 auto;padding:10px 12px}.film-record-toolbar{align-items:flex-start;flex-direction:column}.film-record-sort{display:none}.film-record-tabs{width:100%;display:grid;grid-template-columns:repeat(3,1fr)}.film-record-tabs button{padding:9px 4px;font-size:10px}.film-record-row{grid-template-columns:42px minmax(0,1fr) auto}.film-record-row img,.film-record-placeholder{width:42px;height:48px}
+}
+</style>
+<!-- FINAL-CONTROLLER-ANCHOR -->
+<style>
+/* The independent page controller is placed after every legacy stylesheet. */
+#filmAppPage .archive-screen{max-width:1120px;margin:0 auto}
+.archive-poster-summary{display:grid;grid-template-columns:minmax(190px,.78fr) minmax(0,1.65fr);gap:25px;align-items:center;margin:0 0 27px;padding:24px;border:1px solid #ffffff1b;border-radius:18px;background:#111}.archive-poster-summary h2{margin:5px 0 0;color:#fff;font-size:28px;line-height:1.05;letter-spacing:-.04em}.archive-poster-summary p{margin:8px 0 0;color:#aaa;font-size:12px}.archive-poster-counts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));border-left:1px solid #ffffff1a}.archive-poster-count{min-width:0;padding:6px 12px;border-right:1px solid #ffffff1a}.archive-poster-count small{display:block;overflow:hidden;color:#aaa;font-size:10px;white-space:nowrap;text-overflow:ellipsis}.archive-poster-count b{display:block;margin-top:8px;color:#ff5a1f;font-size:24px;line-height:1}
+.archive-header{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:18px}.archive-kicker{margin:0 0 5px;color:#ff5a1f;font-size:11px;font-weight:700;letter-spacing:.12em}.archive-header h1{margin:0;color:#fff;font-size:38px;line-height:1;letter-spacing:-.05em}.archive-header p{margin:7px 0 0;color:#aaa;font-size:12px}.archive-add{border:0;border-radius:12px;padding:11px 15px;background:#fff;color:#111;font:700 12px Prompt,sans-serif;cursor:pointer}.archive-add:hover{background:#ff5a1f;color:#fff}
+.archive-workspace{overflow:hidden;border:1px solid #ffffff1b;border-radius:18px;background:#111}.archive-tabs{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border-bottom:1px solid #ffffff17;background:#161616}.archive-tab-group{display:flex;flex-wrap:wrap;gap:5px}.archive-tab-group button{border:0;border-radius:8px;padding:9px 11px;background:transparent;color:#aaa;font:600 11px Prompt,sans-serif;cursor:pointer}.archive-tab-group button.active{background:#ff5a1f;color:#fff}.archive-tab-group button:hover{color:#fff;background:#ffffff0d}.archive-sort{color:#aaa;font-size:11px}.archive-list{display:grid;gap:9px;padding:12px}.archive-row{display:grid;grid-template-columns:44px minmax(0,1fr) auto auto;align-items:center;gap:12px;padding:8px;border:1px solid #ffffff0d;border-radius:12px;background:#181818}.archive-row img,.archive-icon{width:44px;height:52px;border-radius:8px;object-fit:cover;background:#282828}.archive-icon{display:grid;place-items:center;color:#ff5a1f;font-size:18px}.archive-row b{display:block;overflow:hidden;color:#fff;font-size:12px;white-space:nowrap;text-overflow:ellipsis}.archive-row small{display:block;margin-top:3px;color:#aaa;font-size:10px}.archive-format{color:#ddd;font-size:10px;white-space:nowrap}.archive-delete{display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:41px!important;min-height:30px!important;margin:0!important;padding:6px 9px!important;border:1px solid #ff5a1f!important;border-radius:99px!important;background:transparent!important;color:#ff6f3c!important;font:700 10px Prompt,sans-serif!important;cursor:pointer!important}.archive-delete:hover{background:#ff5a1f!important;color:#fff!important}.archive-more{justify-self:center;margin:3px 0 4px;border:1px solid #ffffff2a;border-radius:99px;padding:10px 18px;background:#fff;color:#111;font:700 11px Prompt,sans-serif;cursor:pointer}.archive-empty{padding:28px;color:#aaa;font-size:12px;text-align:center}
+.calendar-navigation{display:flex;align-items:center;justify-content:center;gap:12px;margin:0 0 18px}.calendar-navigation button{width:34px;height:34px;border:1px solid #ffffff22;border-radius:8px;background:#151515;color:#fff;cursor:pointer}.calendar-navigation b{min-width:160px;text-align:center;font-size:13px}.calendar-stats-final{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 16px}.calendar-stat-final{min-height:86px;padding:16px;border:1px solid #ffffff1b;border-radius:16px;background:#171717}.calendar-stat-final small{display:block;color:#aaa;font-size:10px}.calendar-stat-final b{display:block;margin-top:6px;color:#fff;font-size:25px;line-height:1;letter-spacing:-.04em}.calendar-stat-final:first-child{background:#ff5a1f}.calendar-stat-final:nth-child(2){background:#fff}.calendar-stat-final:nth-child(2) small,.calendar-stat-final:nth-child(2) b{color:#111}.calendar-layout-final{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(240px,.85fr);gap:16px}.calendar-box{padding:18px;border:1px solid #ffffff1b;border-radius:18px;background:#111}.calendar-week-final,.calendar-days-final{display:grid;grid-template-columns:repeat(7,1fr);gap:7px}.calendar-week-final{margin-bottom:9px;color:#aaa;font-size:10px;text-align:center}.calendar-day-final{position:relative;min-height:65px;padding:8px;border-radius:9px;background:#191919;color:#eee;font-size:11px}.calendar-day-final.muted{color:#555}.calendar-day-final.has-event{background:#572c1b}.calendar-day-final b{position:absolute;bottom:7px;left:7px;display:grid;place-items:center;min-width:18px;height:18px;border-radius:50%;background:#ff5a1f;color:#fff;font-size:9px}.calendar-event{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff14}.calendar-event:last-child{border:0}.calendar-event-date{display:grid;place-items:center;flex:0 0 38px;height:38px;border-radius:9px;background:#ff5a1f;color:#fff;font-size:12px;font-weight:700}.calendar-event b{display:block;font-size:11px}.calendar-event small{display:block;margin-top:2px;color:#aaa;font-size:10px}
+@media(max-width:820px){.archive-poster-summary{grid-template-columns:1fr;gap:18px;padding:19px;margin-bottom:22px}.archive-poster-summary h2{font-size:25px}.archive-poster-counts{grid-template-columns:repeat(3,1fr);border-top:1px solid #ffffff1a;border-left:0}.archive-poster-count{padding:11px 8px;border-bottom:1px solid #ffffff1a}.archive-poster-count:nth-child(3){border-right:0}.archive-poster-count b{font-size:20px}.archive-header{align-items:center}.archive-header h1{font-size:31px}.archive-add{padding:10px 12px}.archive-tabs{align-items:flex-start;flex-direction:column}.archive-tab-group{display:grid;width:100%;grid-template-columns:repeat(3,1fr)}.archive-tab-group button{padding:9px 4px;font-size:10px}.archive-sort{display:none}.archive-row{grid-template-columns:42px minmax(0,1fr) auto;gap:9px}.archive-row img,.archive-icon{width:42px;height:48px}.archive-format{display:none}.archive-delete{min-width:38px!important;padding:6px!important}.calendar-stats-final{grid-template-columns:1fr;gap:8px}.calendar-stat-final{min-height:67px;padding:13px}.calendar-stat-final b{font-size:21px}.calendar-layout-final{grid-template-columns:1fr}.calendar-box{padding:12px}.calendar-week-final,.calendar-days-final{gap:4px}.calendar-day-final{min-height:52px;padding:6px}.calendar-day-final b{bottom:5px;left:5px}}
+</style>
+<script>
+/* Last controller: it owns navigation and prevents legacy page renderers taking over. */
+(()=>{
+  const formats=['Digital 2D','IMAX','ScreenX','4DX','Dolby VISION + ATMOS'];
+  const months=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const week=['อา','จ','อ','พ','พฤ','ศ','ส'];
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  let currentScreen='home',currentFilter='all',showAll=false,currentMonth=new Date();
+  const getMovies=()=>Array.isArray(a)?a.map((item,index)=>({...item,_type:'movie',_index:index})).sort((x,y)=>Date.parse(`${y.date||''}T${y.showtime||'00:00'}`)-Date.parse(`${x.date||''}T${x.showtime||'00:00'}`)):[];
+  const getPosters=()=>Array.isArray(posterData)?posterData.map((item,index)=>({...item,_type:'poster',_index:index})).sort((x,y)=>String(y.date||'').localeCompare(String(x.date||''))):[];
+  const page=()=>document.querySelector('#filmAppPage');
+  const getRecords=()=>[...getMovies(),...getPosters()].sort((x,y)=>Date.parse(`${y.date||''}T${y.showtime||'00:00'}`)-Date.parse(`${x.date||''}T${x.showtime||'00:00'}`));
+  function showScreen(name){
+    currentScreen=name;showAll=false;
+    const hero=document.querySelector('.hero'),legacy=document.querySelector('.main'),app=page();
+    if(hero)hero.hidden=name!=='home';if(legacy)legacy.hidden=true;if(app)app.hidden=name==='home';
+    document.querySelectorAll('#filmSidebar [data-film-page]').forEach(button=>button.classList.toggle('active',button.dataset.filmPage===name));
+    if(name==='records')renderArchive();if(name==='calendar')renderCalendar();window.scrollTo(0,0);
+  }
+  function renderArchive(){
+    const app=page();if(!app)return;
+    const movieRows=getMovies(),posterRows=getPosters(),allRows=getRecords();
+    const selected=currentFilter==='movies'?movieRows:currentFilter==='posters'?posterRows:allRows,shown=showAll?selected:selected.slice(0,3);
+    const active=value=>currentFilter===value?'active':'';
+    const makeRow=item=>{
+      const title=item.title||'โปสเตอร์สะสม',meta=item._type==='movie'?`หนังที่ดู · ${item.date||'ไม่ระบุวันที่'} · ${item.showtime||'--:--'}`:`โปสเตอร์ที่ได้รับ · ${item.date||'ไม่ระบุวันที่'}`;
+      const posterImage=item.posterImage||item.tmdbPoster||item.poster||'';
+      const image=posterImage?`<img src="${esc(posterImage)}" alt="โปสเตอร์ ${esc(title)}">`:'<div class="archive-icon">▧</div>';
+      return `<article class="archive-row">${image}<div><b>${esc(title)}</b><small>${esc(meta)}</small></div><span class="archive-format">${esc(item.format||'Digital 2D')}</span><button type="button" class="archive-delete" data-archive-delete="${item._type}" data-archive-index="${item._index}" aria-label="ลบ ${esc(title)}">ลบ</button></article>`;
+    };
+    const counts=formats.map(format=>`<div class="archive-poster-count"><small>${esc(format)}</small><b>${posterRows.filter(item=>item.format===format).length}</b></div>`).join('');
+    app.innerHTML=`<div class="archive-screen"><section class="archive-poster-summary"><div><p class="archive-kicker">POSTER COLLECTION</p><h2>โปสเตอร์ที่ได้รับ</h2><p>จำนวนโปสเตอร์แยกตามระบบฉาย</p></div><div class="archive-poster-counts">${counts}</div></section><header class="archive-header"><div><p class="archive-kicker">YOUR ARCHIVE</p><h1>รายการทั้งหมด</h1><p>${allRows.length} รายการ</p></div><button class="archive-add" type="button" data-archive-add-poster>＋ เพิ่มโปสเตอร์</button></header><section class="archive-workspace"><div class="archive-tabs"><div class="archive-tab-group"><button class="${active('all')}" type="button" data-archive-filter="all">ทั้งหมด ${allRows.length}</button><button class="${active('movies')}" type="button" data-archive-filter="movies">หนังที่ดู ${movieRows.length}</button><button class="${active('posters')}" type="button" data-archive-filter="posters">โปสเตอร์ ${posterRows.length}</button></div><span class="archive-sort">ใหม่ล่าสุด</span></div><div class="archive-list">${shown.length?shown.map(makeRow).join(''):'<div class="archive-empty">ยังไม่มีข้อมูลในหมวดนี้</div>'}${selected.length>3?`<button type="button" class="archive-more" data-archive-more>${showAll?'แสดงน้อยลง':'ดูเพิ่มเติม'}</button>`:''}</div></section></div>`;
+  }
+  function renderCalendar(){
+    const app=page();if(!app)return;
+    const year=currentMonth.getFullYear(),month=currentMonth.getMonth(),activity=new Map();
+    const entries=getMovies().filter(item=>{const date=new Date(`${item.date||''}T00:00`);return date.getFullYear()===year&&date.getMonth()===month;});
+    entries.forEach(item=>{const day=Number(String(item.date||'').slice(-2));activity.set(day,(activity.get(day)||0)+1)});
+    const first=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate(),previous=new Date(year,month,0).getDate();let cells='';
+    for(let index=0;index<42;index++){const day=index-first+1;if(day<1)cells+=`<div class="calendar-day-final muted">${previous+day}</div>`;else if(day>days)cells+=`<div class="calendar-day-final muted">${day-days}</div>`;else{const count=activity.get(day)||0;cells+=`<div class="calendar-day-final ${count?'has-event':''}">${day}${count?`<b>${count}</b>`:''}</div>`}}
+    const list=entries.length?entries.map(item=>`<article class="calendar-event"><div class="calendar-event-date">${String(item.date||'').slice(-2)}</div><div><b>${esc(item.title||'ไม่ระบุชื่อหนัง')}</b><small>${esc(item.showtime||'--:--')} · ${esc(item.format||'Digital 2D')}</small></div></article>`).join(''):'<div class="archive-empty">เดือนนี้ยังไม่มีรายการหนัง</div>';
+    app.innerHTML=`<div class="archive-screen"><header class="archive-header"><div><p class="archive-kicker">WATCH CALENDAR</p><h1>ปฏิทิน</h1><p>วันที่มีสีส้ม คือวันที่ดูหนังในเดือนที่เลือก</p></div></header><div class="calendar-navigation"><button type="button" data-calendar-move="-1" aria-label="เดือนก่อนหน้า">‹</button><b>${months[month]} ${year}</b><button type="button" data-calendar-move="1" aria-label="เดือนถัดไป">›</button></div><section class="calendar-stats-final" aria-label="สรุปการดูหนังประจำเดือน"><article class="calendar-stat-final"><small>ดูเดือนนี้</small><b>${entries.length} เรื่อง</b></article><article class="calendar-stat-final"><small>ดูในเดือนนี้กี่วัน</small><b>${activity.size} วัน</b></article><article class="calendar-stat-final"><small>วันดูล่าสุด</small><b>${entries[0]?.date?String(entries[0].date).slice(-2)+' '+months[month].slice(0,3):'—'}</b></article></section><div class="calendar-layout-final"><section class="calendar-box"><div class="calendar-week-final">${week.map(day=>`<span>${day}</span>`).join('')}</div><div class="calendar-days-final">${cells}</div></section><aside class="calendar-box"><p class="archive-kicker">รายการเดือน${months[month]}</p>${list}</aside></div></div>`;
+  }
+  function deleteRecord(type,index){
+    if(type==='movie'){const movie=a[index];if(movie?.posterId)posterData=posterData.filter(item=>item.posterId!==movie.posterId);a.splice(index,1)}else posterData.splice(index,1);
+    localStorage.setItem('film-log-red-v3',JSON.stringify(a));localStorage.setItem('film-poster-records-v1',JSON.stringify(posterData));r();renderArchive();
+  }
+  document.addEventListener('click',event=>{
+    const nav=event.target.closest('#filmSidebar [data-film-page]');
+    if(nav){event.preventDefault();event.stopImmediatePropagation();showScreen(nav.dataset.filmPage);return}
+    const filterButton=event.target.closest('[data-archive-filter]');if(filterButton){currentFilter=filterButton.dataset.archiveFilter;showAll=false;renderArchive();return}
+    if(event.target.closest('[data-archive-more]')){showAll=!showAll;renderArchive();return}
+    const removeButton=event.target.closest('[data-archive-delete]');if(removeButton){deleteRecord(removeButton.dataset.archiveDelete,Number(removeButton.dataset.archiveIndex));return}
+    if(event.target.closest('[data-archive-add-poster]'))document.querySelector('#posterDialog')?.showModal();
+    const monthButton=event.target.closest('[data-calendar-move]');if(monthButton){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+Number(monthButton.dataset.calendarMove),1);renderCalendar()}
+  },true);
+  const renderBeforeFinalPages=r;r=function(){renderBeforeFinalPages();if(currentScreen==='records')renderArchive();if(currentScreen==='calendar')renderCalendar()};
+  window.filmLogNavigate=showScreen;setTimeout(()=>showScreen('home'),0);
+})();
+</script>
+<script>
+  document.title='TermNang';
+  let favicon=document.querySelector('link[rel~="icon"]');
+  if(!favicon){favicon=document.createElement('link');favicon.rel='icon';document.head.append(favicon)}
+  favicon.type='image/png';
+  favicon.href='term-nang-logo.png';
+</script>
