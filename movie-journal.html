@@ -67,6 +67,160 @@
   form.addEventListener('reset',()=>{lookupVersion++;clearTimeout(timer);results=[];suggestions.hidden=true;suggestions.innerHTML='';clearPosterChoice()});
 })();
 </script>
+<style>
+/* Shareable 9:16 movie profile and yearly Top 3 stories. */
+.ticket-nav-actions{display:flex;align-items:center;gap:9px}.ticket-share-open{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:10px 18px;border:1px solid #ff5a1f;border-radius:12px;background:#ff5a1f;color:#fff;font:700 13px Prompt,sans-serif;cursor:pointer;box-shadow:0 10px 28px #ff5a1f35;transition:transform .18s,background .18s,color .18s}.ticket-share-open:hover{transform:translateY(-2px);background:#fff;color:#111;border-color:#fff}.ticket-share-open svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+#shareStoryDialog{width:min(1040px,calc(100vw - 30px))!important;max-width:none!important;max-height:calc(100dvh - 30px)!important;margin:auto!important;padding:0!important;overflow:auto!important;border:1px solid #ffffff2c!important;border-radius:24px!important;background:#0b0b0b!important;color:#fff!important;box-shadow:0 28px 90px #000e!important}#shareStoryDialog::backdrop{background:#000d;backdrop-filter:blur(7px)}.share-story-shell{padding:22px}.share-story-head{position:sticky;z-index:10;top:-22px;display:flex;align-items:center;justify-content:space-between;gap:18px;margin:-22px -22px 20px;padding:18px 22px;border-bottom:1px solid #ffffff1b;background:#0b0b0bf3;backdrop-filter:blur(14px)}.share-story-kicker{margin:0;color:#ff5a1f;font:700 10px Prompt,sans-serif;letter-spacing:.14em}.share-story-head h2{margin:3px 0 0;color:#fff;font:700 clamp(22px,3vw,30px) Prompt,sans-serif}.share-story-close{display:grid;place-items:center;flex:0 0 44px;width:44px;height:44px;padding:0;border:1px solid #ffffff35;border-radius:13px;background:transparent;color:#fff;font:300 30px/1 Arial;cursor:pointer}.share-story-close:hover{border-color:#ff5a1f;background:#ff5a1f}.share-story-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,380px);gap:24px;align-items:start}.share-story-controls{min-width:0}.share-story-types{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;padding:5px;border:1px solid #ffffff1b;border-radius:16px;background:#151515}.share-story-type{min-height:48px;padding:9px 12px;border:0;border-radius:12px;background:transparent;color:#aaa;font:700 12px Prompt,sans-serif;cursor:pointer}.share-story-type.is-active{background:#ff5a1f;color:#fff}.share-story-panel{display:none}.share-story-panel.is-active{display:block}.share-story-note{margin:0 0 17px;color:#aaa;font:400 12px/1.65 Prompt,sans-serif}.share-story-fields{display:grid;gap:13px}.share-story-field{display:grid;gap:7px}.share-story-field>span{color:#fff;font:700 12px Prompt,sans-serif}.share-story-field select{width:100%!important;min-height:50px!important;margin:0!important;padding:0 42px 0 14px!important;border:1px solid #ffffff32!important;border-radius:13px!important;background:#181818!important;color:#fff!important;font:500 13px Prompt,sans-serif!important}.share-story-field select:focus{outline:2px solid #ff5a1f!important;outline-offset:1px}.share-story-rank{display:grid;grid-template-columns:44px minmax(0,1fr);gap:11px;align-items:end}.share-story-rank>strong{display:grid;place-items:center;width:44px;height:50px;border:1px solid #ff5a1f;border-radius:13px;color:#ff5a1f;font:800 15px Prompt,sans-serif}.share-story-auto{margin:17px 0 0;padding:14px;border:1px dashed #ffffff2c;border-radius:14px;color:#aaa;font:400 11px/1.6 Prompt,sans-serif}.share-story-auto b{color:#fff}.share-story-preview-wrap{position:sticky;top:78px}.share-story-preview-label{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;color:#aaa;font:600 11px Prompt,sans-serif}.share-story-preview-label span:last-child{color:#ff5a1f}.share-story-canvas-frame{overflow:hidden;width:100%;border:1px solid #ffffff2c;border-radius:20px;background:#111;box-shadow:0 20px 55px #0008}.share-story-canvas-frame canvas{display:block;width:100%;height:auto;aspect-ratio:9/16;background:#080808}.share-story-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}.share-story-action{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:48px;padding:10px 12px;border:1px solid #ffffff38;border-radius:13px;background:#181818;color:#fff;font:700 12px Prompt,sans-serif;cursor:pointer}.share-story-action.primary{border-color:#ff5a1f;background:#ff5a1f}.share-story-action:hover{filter:brightness(1.13)}.share-story-status{min-height:21px;margin:8px 0 0;color:#aaa;font:500 11px/1.5 Prompt,sans-serif;text-align:center}.share-story-status.is-success{color:#ff7847}.share-profile-summary{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.share-profile-summary div{padding:15px;border:1px solid #ffffff1d;border-radius:14px;background:#151515}.share-profile-summary b{display:block;color:#fff;font:800 22px Prompt,sans-serif}.share-profile-summary span{color:#999;font:500 11px Prompt,sans-serif}
+@media(max-width:760px){.ticket-nav-actions{gap:7px}.ticket-share-open{min-height:42px;padding:9px 13px}.share-story-shell{padding:14px}.share-story-head{top:-14px;margin:-14px -14px 15px;padding:14px}.share-story-layout{grid-template-columns:1fr;gap:18px}.share-story-preview-wrap{position:static;width:min(100%,360px);margin:0 auto}.share-story-actions{position:sticky;bottom:-14px;z-index:8;margin:13px -14px -14px;padding:10px 14px 14px;background:linear-gradient(0deg,#0b0b0b 82%,transparent)}#shareStoryDialog{width:calc(100vw - 16px)!important;max-height:calc(100dvh - 16px)!important;border-radius:20px!important}.share-story-types{position:sticky;z-index:8;top:62px}.share-story-field select{font-size:12px!important}}
+@media(max-width:390px){.share-story-type{padding-inline:7px;font-size:11px}.share-profile-summary{grid-template-columns:1fr 1fr}.share-story-rank{grid-template-columns:40px minmax(0,1fr)}.share-story-rank>strong{width:40px}}
+.share-backdrop-picker{grid-column:1/-1;min-width:0;max-width:100%;margin:-2px 0 3px;padding:11px;overflow:hidden;border:1px solid #ffffff1b;border-radius:13px;background:#121212}.share-backdrop-picker-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.share-backdrop-picker-head b{color:#fff;font:700 11px Prompt,sans-serif}.share-backdrop-picker-head small{color:#888;font:500 9px Prompt,sans-serif}.share-backdrop-status{margin:0;color:#8e8e8e;font:500 10px/1.5 Prompt,sans-serif}.share-backdrop-options{display:flex;width:100%;min-width:0;gap:8px;overflow-x:auto;overscroll-behavior-inline:contain;padding:2px 1px 5px;scrollbar-width:thin;scrollbar-color:#ff5a1f #202020}.share-backdrop-choice{position:relative;display:block;flex:0 0 92px;width:92px;height:54px;padding:0;border:2px solid transparent;border-radius:9px;overflow:hidden;background:#242424;cursor:pointer}.share-backdrop-choice img{display:block;width:100%;height:100%;object-fit:cover}.share-backdrop-choice.is-selected{border-color:#ff5a1f;box-shadow:0 0 0 2px #ff5a1f33}.share-backdrop-choice.is-selected:after{content:'✓';position:absolute;right:5px;bottom:4px;display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#ff5a1f;color:#fff;font:800 10px Arial}.share-story-panel[data-story-panel="top3"] .share-story-fields{min-width:0;gap:10px}.share-story-panel[data-story-panel="top3"] .share-story-rank{min-width:0;margin-top:3px}
+@media(max-width:760px){.share-backdrop-choice{flex-basis:82px;width:82px;height:49px}.share-backdrop-picker{padding:9px}.share-backdrop-picker-head small{display:none}}
+</style>
+<style>
+.share-story-field input[data-profile-movie-input]{display:block;width:100%!important;min-height:50px!important;margin:0!important;padding:0 14px!important;border:1px solid #ffffff32!important;border-radius:13px!important;background:#181818!important;color:#fff!important;font:500 13px Prompt,sans-serif!important}.share-story-field input[data-profile-movie-input]:focus{outline:2px solid #ff5a1f!important;outline-offset:1px}.share-profile-feature{display:grid;gap:11px;margin-bottom:15px}.share-profile-feature .share-backdrop-picker{margin:0}.share-profile-feature-note{margin:0;color:#777;font:500 10px/1.5 Prompt,sans-serif}
+</style>
+<script>
+/* Build and export Instagram Story-sized movie summaries without external services. */
+(()=>{
+  const STORY_W=1080,STORY_H=1920,ORANGE='#ff5a1f',WHITE='#f7f4ef',BLACK='#080808',MUTED='#a4a4a4',TMDB_KEY='5f290fddbe46b3517c024d444e4eb3bb';
+  const safeMovies=()=>Array.isArray(a)?a:[];
+  const safePosters=()=>Array.isArray(posterData)?posterData:[];
+  const dateValue=movie=>Date.parse(`${movie?.date||''}T${movie?.showtime||'00:00'}`)||0;
+  const movieYear=movie=>String(movie?.date||'').slice(0,4);
+  const latestMovie=()=>[...safeMovies()].sort((left,right)=>dateValue(right)-dateValue(left))[0];
+  const shareIcon='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V3m0 0L7.5 7.5M12 3l4.5 4.5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>';
+
+  const ensureShareButton=()=>{
+    const nav=document.querySelector('.hero.ticket-home .nav'),addButton=nav?.querySelector('#add1');
+    if(!nav||!addButton||nav.querySelector('[data-open-story-share]'))return;
+    const actions=document.createElement('div'),button=document.createElement('button');
+    actions.className='ticket-nav-actions';button.type='button';button.className='ticket-share-open';button.dataset.openStoryShare='';button.innerHTML=`${shareIcon}<span>แชร์</span>`;
+    nav.insertBefore(actions,addButton);actions.append(button,addButton);
+  };
+  const observer=new MutationObserver(ensureShareButton);observer.observe(document.body,{childList:true,subtree:true});ensureShareButton();
+
+  const dialog=document.createElement('dialog');
+  dialog.id='shareStoryDialog';
+  dialog.innerHTML=`<div class="share-story-shell"><header class="share-story-head"><div><p class="share-story-kicker">SHARE YOUR MOVIE STORY</p><h2>แชร์เรื่องราวการดูหนัง</h2></div><button type="button" class="share-story-close" aria-label="ปิดหน้าต่าง">×</button></header><div class="share-story-layout"><section class="share-story-controls"><div class="share-story-types" role="tablist" aria-label="เลือกรูปแบบภาพ"><button type="button" class="share-story-type is-active" data-story-type="profile" role="tab" aria-selected="true">โปรไฟล์การดูหนัง</button><button type="button" class="share-story-type" data-story-type="top3" role="tab" aria-selected="false">Top 3 แห่งปี</button></div><div class="share-story-panel is-active" data-story-panel="profile"><p class="share-story-note">สร้างภาพสรุปจากข้อมูลของคุณอัตโนมัติ เหมาะสำหรับแชร์ลง Instagram Story</p><div class="share-profile-summary"><div><b data-profile-total>0</b><span>เรื่องที่ดูทั้งหมด</span></div><div><b data-profile-posters>0</b><span>โปสเตอร์ที่สะสม</span></div><div><b data-profile-formats>0</b><span>ระบบที่เคยดู</span></div><div><b data-profile-year>0</b><span>เรื่องที่ดูปีนี้</span></div></div><p class="share-story-auto"><b>ในภาพจะมี:</b> จำนวนหนังทั้งหมด ระบบที่ดูบ่อย หนังเรื่องล่าสุด จำนวนโปสเตอร์ และสถิติของปีนี้</p></div><div class="share-story-panel" data-story-panel="top3"><p class="share-story-note">เลือกปีและหนัง 3 เรื่องจากประวัติ ระบบฉายและคะแนนจะนำมาแสดงให้อัตโนมัติ</p><div class="share-story-fields"><label class="share-story-field"><span>ปี</span><select data-top-year aria-label="เลือกปี"></select></label><div class="share-story-rank"><strong>01</strong><label class="share-story-field"><span>อันดับ 1</span><select data-top-movie="0" aria-label="เลือกหนังอันดับ 1"></select></label></div><div class="share-story-rank"><strong>02</strong><label class="share-story-field"><span>อันดับ 2</span><select data-top-movie="1" aria-label="เลือกหนังอันดับ 2"></select></label></div><div class="share-story-rank"><strong>03</strong><label class="share-story-field"><span>อันดับ 3</span><select data-top-movie="2" aria-label="เลือกหนังอันดับ 3"></select></label></div></div><p class="share-story-auto"><b>ตั้งต้นให้อัตโนมัติ:</b> ระบบจะเลือก 3 เรื่องที่ให้คะแนนสูงสุดในปีนั้น คุณสามารถเปลี่ยนได้ทุกอันดับ</p></div></section><aside class="share-story-preview-wrap"><div class="share-story-preview-label"><span>ตัวอย่างภาพ</span><span>1080 × 1920 px</span></div><div class="share-story-canvas-frame"><canvas width="${STORY_W}" height="${STORY_H}" aria-label="ตัวอย่างภาพสำหรับแชร์"></canvas></div><div class="share-story-actions"><button type="button" class="share-story-action" data-download-story>ดาวน์โหลดภาพ</button><button type="button" class="share-story-action primary" data-share-story>${shareIcon} แชร์ภาพ</button></div><p class="share-story-status" role="status" aria-live="polite"></p></aside></div></div>`;
+  document.body.append(dialog);
+  const profilePanel=dialog.querySelector('[data-story-panel="profile"]');
+  profilePanel.innerHTML=`<p class="share-story-note">เลือกหนังจากประวัติด้วยการพิมพ์ชื่อ แล้วเลือกภาพ backdrop สำหรับการ์ดโปรไฟล์</p><div class="share-profile-feature"><label class="share-story-field"><span>หนังที่ต้องการแสดง</span><input type="text" data-profile-movie-input list="shareProfileMovieOptions" autocomplete="off" placeholder="พิมพ์ชื่อหนัง"><datalist id="shareProfileMovieOptions"></datalist></label><p class="share-profile-feature-note">ตั้งต้นเป็นหนังที่ดูล่าสุด คุณสามารถพิมพ์ชื่อเรื่องอื่นจากประวัติได้</p><div class="share-backdrop-picker" data-profile-backdrop-picker><div class="share-backdrop-picker-head"><b>เลือกภาพ backdrop</b><small>ภาพหน้าปกของโปรไฟล์</small></div><p class="share-backdrop-status">พิมพ์ชื่อหนังเพื่อค้นหารูปภาพ</p><div class="share-backdrop-options" role="listbox" aria-label="เลือกภาพพื้นหลังโปรไฟล์"></div></div></div><div class="share-profile-summary"><div><b data-profile-total>0</b><span>เรื่องที่ดูทั้งหมด</span></div><div><b data-profile-posters>0</b><span>โปสเตอร์ที่สะสม</span></div><div><b data-profile-formats>0</b><span>ระบบที่เคยดู</span></div><div><b data-profile-year>0</b><span>เรื่องที่ดูปีนี้</span></div></div><p class="share-story-auto"><b>ในภาพจะมี:</b> ตั๋วหนังพร้อมข้อมูล เรื่องที่เลือก สถิติรวม และจำนวนระบบฉาย</p>`;
+  dialog.querySelector('[data-story-panel="top3"] .share-story-note').textContent='เลือกปีและหนัง 3 เรื่องจากประวัติ ระบบฉาย วันที่ดู และชื่อผู้กำกับจะนำมาแสดงให้อัตโนมัติ';
+  const canvas=dialog.querySelector('canvas'),ctx=canvas.getContext('2d'),status=dialog.querySelector('.share-story-status');
+  const chosenBackdrops=['','',''],backdropLists=[[],[],[]],directorNames=['','',''],backdropTokens=[0,0,0],storyImages=new Map();
+  dialog.querySelectorAll('.share-story-rank').forEach((rank,index)=>{const picker=document.createElement('div');picker.className='share-backdrop-picker';picker.dataset.backdropPicker=String(index);picker.innerHTML=`<div class="share-backdrop-picker-head"><b>เลือกภาพ backdrop</b><small>ภาพพื้นหลังของช่องที่ ${index+1}</small></div><p class="share-backdrop-status">เลือกหนังเพื่อค้นหารูปภาพ</p><div class="share-backdrop-options" role="listbox" aria-label="เลือกภาพพื้นหลังอันดับ ${index+1}"></div>`;rank.after(picker)});
+  let activeType='profile',profileMovieIndex=-1,profileBackdrop='',profileBackdropToken=0,profileInputTimer=0;
+
+  const rounded=(x,y,w,h,r,fill,stroke)=>{ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();if(fill){ctx.fillStyle=fill;ctx.fill()}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke()}};
+  const line=(x1,y1,x2,y2,color='#ffffff25',width=2)=>{ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke()};
+  const font=(weight,size)=>`${weight} ${size}px "Prompt", Arial, sans-serif`;
+  const cleanText=value=>String(value??'').trim();
+  const ellipsis=(value,maxWidth)=>{let text=cleanText(value)||'—';if(ctx.measureText(text).width<=maxWidth)return text;while(text.length>1&&ctx.measureText(`${text}…`).width>maxWidth)text=text.slice(0,-1);return `${text}…`};
+  const wrap=(value,x,y,maxWidth,lineHeight,maxLines=2)=>{const words=cleanText(value).split(/\s+/).filter(Boolean);if(!words.length){ctx.fillText('—',x,y);return y}let current='',lines=[];for(const word of words){const test=current?`${current} ${word}`:word;if(ctx.measureText(test).width<=maxWidth)current=test;else{if(current)lines.push(current);current=word}}if(current)lines.push(current);if(lines.length>maxLines){lines=lines.slice(0,maxLines);lines[maxLines-1]=ellipsis(lines[maxLines-1],maxWidth)}lines.forEach((text,index)=>ctx.fillText(text,x,y+index*lineHeight));return y+(lines.length-1)*lineHeight};
+  const drawBrand=(section)=>{ctx.fillStyle=ORANGE;ctx.font=font(800,30);ctx.letterSpacing='5px';ctx.fillText('TERMNANG',82,102);ctx.letterSpacing='0px';ctx.fillStyle=MUTED;ctx.font=font(600,22);ctx.textAlign='right';ctx.fillText(section,998,102);ctx.textAlign='left';line(82,136,998,136)};
+  const drawFooter=()=>{line(82,1784,998,1784);ctx.fillStyle=WHITE;ctx.font=font(700,24);ctx.fillText('เติมหนังให้วันธรรมดา กลายเป็นวันที่น่าจดจำ',82,1840);ctx.fillStyle=MUTED;ctx.font=font(500,18);ctx.textAlign='right';ctx.fillText('TermNang • Movie Journal',998,1840);ctx.textAlign='left'};
+  const drawBackground=()=>{ctx.clearRect(0,0,STORY_W,STORY_H);ctx.fillStyle=BLACK;ctx.fillRect(0,0,STORY_W,STORY_H);ctx.save();ctx.globalAlpha=.12;ctx.fillStyle=ORANGE;ctx.beginPath();ctx.arc(1000,90,400,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.06;ctx.beginPath();ctx.arc(-20,1570,520,0,Math.PI*2);ctx.fill();ctx.restore()};
+  const drawTop3Background=()=>{ctx.clearRect(0,0,STORY_W,STORY_H);const base=ctx.createLinearGradient(0,0,STORY_W,STORY_H);base.addColorStop(0,'#020202');base.addColorStop(.48,'#0c0806');base.addColorStop(1,'#1a0903');ctx.fillStyle=base;ctx.fillRect(0,0,STORY_W,STORY_H);ctx.save();ctx.filter='blur(105px)';ctx.globalAlpha=.72;ctx.fillStyle='#ff5a20';ctx.beginPath();ctx.arc(1060,100,330,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.34;ctx.beginPath();ctx.arc(-80,920,360,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.42;ctx.beginPath();ctx.arc(1000,1810,390,0,Math.PI*2);ctx.fill();ctx.restore();const vignette=ctx.createRadialGradient(STORY_W/2,STORY_H/2,240,STORY_W/2,STORY_H/2,1040);vignette.addColorStop(0,'rgba(0,0,0,.02)');vignette.addColorStop(1,'rgba(0,0,0,.7)');ctx.fillStyle=vignette;ctx.fillRect(0,0,STORY_W,STORY_H)};
+  const formatCounts=()=>{const map=new Map();safeMovies().forEach(movie=>{const name=cleanText(movie.format)||'ไม่ระบุ';map.set(name,(map.get(name)||0)+1)});return [...map.entries()].sort((left,right)=>right[1]-left[1])};
+  const selectedProfileMovie=()=>safeMovies()[profileMovieIndex]||latestMovie()||null;
+  const profileTicketId=movie=>{const match=String(movie?.date||'').match(/^(\d{4})-(\d{2})-(\d{2})$/),dateCode=match?`${match[3]}${match[2]}${match[1]}`:'NO-DATE',ordered=[...safeMovies()].sort((left,right)=>dateValue(left)-dateValue(right)),ordinal=Math.max(1,ordered.indexOf(movie)+1);return `FLM-${dateCode}-${String(ordinal).padStart(3,'0')}`};
+  const drawProfile=()=>{
+    drawTop3Background();const movies=safeMovies(),posters=safePosters(),movie=selectedProfileMovie(),year=String(new Date().getFullYear()),yearCount=movies.filter(item=>movieYear(item)===year).length,allFormats=['Digital 2D','IMAX','ScreenX','4DX','Dolby VISION + ATMOS'],formats=allFormats.map(name=>[name,movies.filter(item=>cleanText(item.format)===name).length]),x=100,y=264,w=880,h=1336,heroH=540,lowerY=y+heroH,logo=loadStoryImage('logoo.png'),backdrop=loadStoryImage(profileBackdrop),ticketCard=[...document.querySelectorAll('#ticketRail .movie-ticket')].find(card=>cleanText(card.querySelector('.ticket-title h2')?.textContent)===cleanText(movie?.title)),ticketPoster=ticketCard?.querySelector('.ticket-art img')?.src||movie?.tmdbPoster||movie?.poster||movie?.tmdbBackdrop||'',poster=loadStoryImage(ticketPoster.replace('/original/','/w500/'));
+    if(logo){const logoW=132,logoH=70,logoX=(STORY_W-logoW)/2,logoY=94;ctx.save();ctx.globalAlpha=.5;ctx.shadowColor='rgba(0,0,0,.38)';ctx.shadowBlur=18;ctx.shadowOffsetY=5;ctx.drawImage(logo,700,1650,4800,2600,logoX,logoY,logoW,logoH);ctx.restore()}
+    ctx.save();ctx.shadowColor='rgba(0,0,0,.45)';ctx.shadowBlur=48;ctx.shadowOffsetY=26;rounded(x,y,w,h,52,'#f7f4ef');ctx.restore();
+    ctx.save();ctx.beginPath();ctx.roundRect(x,y,w,h,52);ctx.clip();if(backdrop)drawImageCover(backdrop,x,y,w,heroH+42);else{const fallback=ctx.createLinearGradient(x,y,x+w,y+heroH);fallback.addColorStop(0,'#6b2514');fallback.addColorStop(.48,'#22100c');fallback.addColorStop(1,'#080808');ctx.fillStyle=fallback;ctx.fillRect(x,y,w,heroH+42)}const heroShade=ctx.createLinearGradient(x,y,x,y+heroH);heroShade.addColorStop(0,'rgba(0,0,0,.08)');heroShade.addColorStop(1,'rgba(0,0,0,.68)');ctx.fillStyle=heroShade;ctx.fillRect(x,y,w,heroH+42);ctx.fillStyle='#f7f4ef';ctx.fillRect(x,lowerY,w,h-heroH);ctx.restore();
+    ctx.fillStyle=ORANGE;ctx.font=font(800,22);ctx.fillText('MOVIE PROFILE',x+42,y+55);
+    const date=movie?.date?movie.date.split('-').reverse().join('/'):'ไม่ระบุวันที่',time=cleanText(movie?.showtime)||'--:--',format=cleanText(movie?.format)||'ไม่ระบุระบบ',rating=Math.max(0,Math.min(5,Number(movie?.rating)||0)),tx=x+55,ty=lowerY-114,tw=w-110,th=350,imageW=205,contentX=tx+242;
+    ctx.save();ctx.shadowColor='rgba(0,0,0,.32)';ctx.shadowBlur=30;ctx.shadowOffsetY=14;rounded(tx,ty,tw,th,30,'#fbfaf7','#d8d2c8');ctx.restore();
+    const posterInset=14,posterX=tx+posterInset,posterY=ty+posterInset,posterW=imageW-posterInset*2,posterH=th-posterInset*2;rounded(posterX,posterY,posterW,posterH,20,'#171717',ORANGE);ctx.save();ctx.beginPath();ctx.roundRect(posterX,posterY,posterW,posterH,20);ctx.clip();if(poster)drawImageCover(poster,posterX,posterY,posterW,posterH);ctx.restore();
+    ctx.save();ctx.setLineDash([9,9]);ctx.strokeStyle='#bbb5ab';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(tx+imageW+18,ty+22);ctx.lineTo(tx+imageW+18,ty+th-22);ctx.stroke();ctx.restore();
+    ctx.fillStyle=ORANGE;ctx.font=font(800,17);ctx.fillText(movie===latestMovie()?'ตั๋วหนังที่ดูล่าสุด':'ตั๋วหนังที่เลือก',contentX,ty+44);ctx.fillStyle='#111';ctx.font=font(800,34);wrap(movie?.title||'ยังไม่มีข้อมูลหนัง',contentX,ty+94,tw-imageW-85,40,2);
+    const fieldY=ty+205,fieldW=150;[['DATE',date],['TIME',time],['FORMAT',format]].forEach(([label,value],index)=>{const fx=contentX+index*fieldW;ctx.fillStyle='#99938a';ctx.font=font(700,13);ctx.fillText(label,fx,fieldY);ctx.fillStyle='#171717';ctx.font=font(700,index===2?16:19);ctx.fillText(ellipsis(value,fieldW-12),fx,fieldY+29)});
+    line(contentX,ty+262,tx+tw-28,ty+262,'#d6d0c7',1);ctx.fillStyle='#99938a';ctx.font=font(700,13);ctx.fillText('TICKET ID',contentX,ty+294);ctx.fillStyle='#171717';ctx.font=font(800,18);ctx.fillText(profileTicketId(movie),contentX,ty+323);ctx.fillStyle=ORANGE;ctx.font=font(800,18);ctx.textAlign='right';ctx.fillText(rating?`${'★'.repeat(rating)}  ${rating}/5`:'ยังไม่ให้คะแนน',tx+tw-28,ty+323);ctx.textAlign='left';
+    ctx.fillStyle='#111';ctx.font=font(800,24);ctx.fillText('สรุปการดูหนังของคุณ',x+55,lowerY+292);
+    rounded(x+55,lowerY+322,w-110,132,25,'#ebe8e2','#d8d3ca');const stats=[['ตั๋วหนังทั้งหมด',movies.length],['ดูในปีนี้',yearCount],['โปสเตอร์สะสม',posters.length]];stats.forEach(([label,value],index)=>{const cellW=(w-110)/3,cellX=x+55+cellW*index;ctx.fillStyle='#111';ctx.font=font(800,34);ctx.textAlign='center';ctx.fillText(String(value),cellX+cellW/2,lowerY+375);ctx.fillStyle='#777';ctx.font=font(600,16);ctx.fillText(label,cellX+cellW/2,lowerY+413);if(index<stats.length-1)line(cellX+cellW,lowerY+343,cellX+cellW,lowerY+433,'#c9c5be',1)});ctx.textAlign='left';
+    ctx.fillStyle='#111';ctx.font=font(800,24);ctx.fillText('จำนวนระบบฉาย',x+55,lowerY+510);
+    const formatStartY=lowerY+538,formatGap=14,formatBoxW=(w-110-formatGap)/2,formatBoxH=58;formats.forEach(([name,count],index)=>{const column=index%2,row=Math.floor(index/2),bx=x+55+column*(formatBoxW+formatGap),by=formatStartY+row*(formatBoxH+12);rounded(bx,by,formatBoxW,formatBoxH,17,'#f3f0eb','#ded9d0');ctx.fillStyle='#2b2926';ctx.font=font(650,name.length>18?15:17);ctx.fillText(name,bx+18,by+36);ctx.fillStyle=ORANGE;ctx.font=font(800,18);ctx.textAlign='right';ctx.fillText(`${count} ครั้ง`,bx+formatBoxW-18,by+36);ctx.textAlign='left'});
+    ctx.fillStyle='#777';ctx.font=font(500,15);ctx.textAlign='right';ctx.fillText(`สถิติปี ${year}`,x+w-55,lowerY+766);ctx.textAlign='left';drawFooter();
+  };
+  const topSelects=()=>[...dialog.querySelectorAll('[data-top-movie]')];
+  const selectedTopMovies=()=>topSelects().map(select=>{const index=Number(select.value);return Number.isInteger(index)&&index>=0?safeMovies()[index]:null});
+  const backdropResultCache=new Map();
+  const backdropPicker=rank=>dialog.querySelector(`[data-backdrop-picker="${rank}"]`);
+  const normaliseTitle=value=>cleanText(value).toLocaleLowerCase().replace(/[^a-z0-9ก-๙]+/gi,' ');
+  const loadStoryImage=url=>{
+    if(!url)return null;
+    let entry=storyImages.get(url);
+    if(!entry){const image=new Image();entry={image,ready:false,error:false};storyImages.set(url,entry);image.crossOrigin='anonymous';image.onload=()=>{entry.ready=true;draw()};image.onerror=()=>{entry.error=true;draw()};image.src=url}
+    return entry.ready?entry.image:null;
+  };
+  const drawImageCover=(image,x,y,w,h)=>{const scale=Math.max(w/image.naturalWidth,h/image.naturalHeight),sw=w/scale,sh=h/scale,sx=(image.naturalWidth-sw)/2,sy=(image.naturalHeight-sh)/2;ctx.drawImage(image,sx,sy,sw,sh,x,y,w,h)};
+  const renderBackdropChoices=(rank,urls,message='')=>{
+    const picker=backdropPicker(rank),options=picker?.querySelector('.share-backdrop-options'),pickerStatus=picker?.querySelector('.share-backdrop-status');if(!picker||!options||!pickerStatus)return;
+    options.replaceChildren();pickerStatus.textContent=message;
+    urls.forEach((url,index)=>{const button=document.createElement('button'),image=document.createElement('img');button.type='button';button.className='share-backdrop-choice';button.setAttribute('role','option');button.setAttribute('aria-label',`เลือกภาพ backdrop ${index+1} สำหรับอันดับ ${rank+1}`);button.setAttribute('aria-selected',String(chosenBackdrops[rank]===url));button.classList.toggle('is-selected',chosenBackdrops[rank]===url);image.src=url.replace('/original/','/w300/').replace('/w1280/','/w300/');image.alt='';image.loading='lazy';button.append(image);button.addEventListener('click',()=>{chosenBackdrops[rank]=url;options.querySelectorAll('button').forEach(item=>{const selected=item===button;item.classList.toggle('is-selected',selected);item.setAttribute('aria-selected',String(selected))});loadStoryImage(url);draw()});options.append(button)});
+    if(urls.length)pickerStatus.textContent=`มี ${urls.length} ภาพ เลื่อนเพื่อเลือกภาพที่ต้องการ`;
+  };
+  const findBackdropUrls=async movie=>{
+    const key=`${movie.title||''}|${movieYear(movie)}`;if(backdropResultCache.has(key))return backdropResultCache.get(key);
+    const direct=[movie.tmdbBackdrop].filter(Boolean),urls=[...direct];let director=cleanText(movie.director);
+    try{
+      const searchResponse=await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${encodeURIComponent(TMDB_KEY)}&query=${encodeURIComponent(movie.title||'')}&language=en-US`);if(!searchResponse.ok)throw new Error('search failed');
+      const search=await searchResponse.json(),match=(search.results||[]).find(item=>normaliseTitle(item.title)===normaliseTitle(movie.title)||normaliseTitle(item.original_title)===normaliseTitle(movie.title))||(search.results||[])[0];if(!match)throw new Error('not found');
+      if(match.backdrop_path)urls.unshift(`https://image.tmdb.org/t/p/original${match.backdrop_path}`);
+      const [imagesResult,creditsResult]=await Promise.allSettled([
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/images?api_key=${encodeURIComponent(TMDB_KEY)}&include_image_language=en,null`).then(response=>{if(!response.ok)throw new Error('images failed');return response.json()}),
+        fetch(`https://api.themoviedb.org/3/movie/${match.id}/credits?api_key=${encodeURIComponent(TMDB_KEY)}&language=en-US`).then(response=>{if(!response.ok)throw new Error('credits failed');return response.json()})
+      ]);
+      if(imagesResult.status==='fulfilled')urls.push(...(imagesResult.value.backdrops||[]).map(item=>`https://image.tmdb.org/t/p/original${item.file_path}`));
+      if(creditsResult.status==='fulfilled'){const names=[...new Set((creditsResult.value.crew||[]).filter(member=>member.job==='Director').map(member=>cleanText(member.name)).filter(Boolean))];if(names.length)director=names.join(' & ')}
+    }catch{}
+    const result={urls:[...new Set(urls.filter(Boolean))].slice(0,24),director};backdropResultCache.set(key,result);return result
+  };
+  const loadBackdropsForRank=async rank=>{
+    const movie=selectedTopMovies()[rank],token=++backdropTokens[rank];chosenBackdrops[rank]='';backdropLists[rank]=[];directorNames[rank]='';
+    if(!movie){renderBackdropChoices(rank,[],'ยังไม่มีหนังในอันดับนี้');draw();return}
+    renderBackdropChoices(rank,[],`กำลังค้นหา backdrop ของ ${movie.title||'หนังเรื่องนี้'}…`);
+    const result=await findBackdropUrls(movie);if(token!==backdropTokens[rank])return;const urls=result.urls||[];directorNames[rank]=result.director||'';backdropLists[rank]=urls;chosenBackdrops[rank]=urls[0]||'';if(chosenBackdrops[rank])loadStoryImage(chosenBackdrops[rank]);renderBackdropChoices(rank,urls,urls.length?'':'ไม่พบภาพ backdrop สำหรับเรื่องนี้');draw();
+  };
+  const renderProfileBackdropChoices=(urls,message='')=>{
+    const picker=dialog.querySelector('[data-profile-backdrop-picker]'),options=picker?.querySelector('.share-backdrop-options'),pickerStatus=picker?.querySelector('.share-backdrop-status');if(!picker||!options||!pickerStatus)return;options.replaceChildren();pickerStatus.textContent=message;
+    urls.forEach((url,index)=>{const button=document.createElement('button'),image=document.createElement('img');button.type='button';button.className='share-backdrop-choice';button.setAttribute('role','option');button.setAttribute('aria-label',`เลือกภาพ backdrop ${index+1} สำหรับโปรไฟล์`);button.setAttribute('aria-selected',String(profileBackdrop===url));button.classList.toggle('is-selected',profileBackdrop===url);image.src=url.replace('/original/','/w300/').replace('/w1280/','/w300/');image.alt='';image.loading='lazy';button.append(image);button.addEventListener('click',()=>{profileBackdrop=url;options.querySelectorAll('button').forEach(item=>{const selected=item===button;item.classList.toggle('is-selected',selected);item.setAttribute('aria-selected',String(selected))});loadStoryImage(url);draw()});options.append(button)});if(urls.length)pickerStatus.textContent=`มี ${urls.length} ภาพ เลื่อนเพื่อเลือก backdrop ที่ต้องการ`;
+  };
+  const loadProfileBackdrop=async()=>{
+    const movie=selectedProfileMovie(),token=++profileBackdropToken;profileBackdrop='';if(!movie){renderProfileBackdropChoices([],'ยังไม่มีหนังในประวัติ');draw();return}renderProfileBackdropChoices([],`กำลังค้นหา backdrop ของ ${movie.title||'หนังเรื่องนี้'}…`);if(movie.tmdbPoster||movie.poster)loadStoryImage(movie.tmdbPoster||movie.poster);const result=await findBackdropUrls(movie);if(token!==profileBackdropToken)return;const urls=result.urls||[];profileBackdrop=urls[1]||urls[0]||movie.tmdbBackdrop||'';if(profileBackdrop)loadStoryImage(profileBackdrop);renderProfileBackdropChoices(urls,urls.length?'':'ไม่พบภาพ backdrop สำหรับเรื่องนี้');draw();
+  };
+  const chooseProfileMovieFromInput=()=>{const input=dialog.querySelector('[data-profile-movie-input]'),query=normaliseTitle(input?.value);if(!query)return;const movies=safeMovies(),index=movies.findIndex(movie=>normaliseTitle(movie.title)===query);if(index<0){const statusNode=dialog.querySelector('[data-profile-backdrop-picker] .share-backdrop-status');if(statusNode)statusNode.textContent='เลือกชื่อหนังจากรายการแนะนำเพื่อค้นหา backdrop';return}profileMovieIndex=index;loadProfileBackdrop()};
+  const fillProfileMovies=()=>{const movies=safeMovies(),list=dialog.querySelector('#shareProfileMovieOptions'),input=dialog.querySelector('[data-profile-movie-input]'),latest=latestMovie();list.replaceChildren();movies.forEach(movie=>{const option=document.createElement('option');option.value=movie.title||'ไม่ระบุชื่อ';option.label=`${movie.format||'ไม่ระบุระบบ'} • ${movie.date||'ไม่ระบุวันที่'}`;list.append(option)});profileMovieIndex=Math.max(0,movies.indexOf(latest));input.value=latest?.title||'';loadProfileBackdrop()};
+  const drawTop3=()=>{
+    drawTop3Background();const year=dialog.querySelector('[data-top-year]').value||String(new Date().getFullYear()),movies=selectedTopMovies();ctx.fillStyle=ORANGE;ctx.font=font(800,28);ctx.fillText('TERMNANG',56,218);ctx.fillStyle=WHITE;ctx.font=font(800,42);ctx.textAlign='right';ctx.fillText(`MY TOP 3 • ${year}`,1024,222);ctx.textAlign='left';
+    movies.forEach((movie,index)=>{
+      const x=38,y=258+index*536,w=1004,h=516,image=loadStoryImage(chosenBackdrops[index]);ctx.save();rounded(x,y,w,h,28,'#181818');ctx.beginPath();ctx.roundRect(x,y,w,h,28);ctx.clip();
+      if(image)drawImageCover(image,x,y,w,h);else{const fallback=ctx.createLinearGradient(x,y,x+w,y+h);fallback.addColorStop(0,index===0?'#592414':'#242424');fallback.addColorStop(1,'#080808');ctx.fillStyle=fallback;ctx.fillRect(x,y,w,h)}
+      const shade=ctx.createLinearGradient(0,y+80,0,y+h);shade.addColorStop(0,'rgba(0,0,0,.04)');shade.addColorStop(.5,'rgba(0,0,0,.2)');shade.addColorStop(1,'rgba(0,0,0,.96)');ctx.fillStyle=shade;ctx.fillRect(x,y,w,h);ctx.restore();ctx.strokeStyle=index===0?ORANGE:'#ffffff2d';ctx.lineWidth=index===0?4:2;ctx.beginPath();ctx.roundRect(x,y,w,h,28);ctx.stroke();ctx.fillStyle=ORANGE;ctx.font=font(800,48);ctx.fillText(`0${index+1}`,x+34,y+70);ctx.fillStyle=WHITE;ctx.font=font(800,43);wrap(movie?.title||'เลือกหนังเรื่องนี้',x+36,y+h-142,w-72,53,2);ctx.font=font(700,23);ctx.fillStyle='#dedede';const date=movie?.date?movie.date.split('-').reverse().join('/'):'ไม่ระบุวันที่';ctx.fillText(`${cleanText(movie?.format)||'ไม่ระบุระบบ'}  •  ${date}`,x+38,y+h-50);
+      ctx.fillStyle=ORANGE;ctx.textAlign='right';ctx.font=font(700,22);ctx.fillText(ellipsis(`DIRECTOR • ${directorNames[index]||'ไม่พบข้อมูล'}`,420),x+w-38,y+h-50);ctx.textAlign='left';
+    });
+  };
+  const draw=()=>{if(activeType==='top3')drawTop3();else drawProfile()};
+
+  const refreshSummary=()=>{const movies=safeMovies(),formats=new Set(movies.map(movie=>cleanText(movie.format)).filter(Boolean)),year=String(new Date().getFullYear());dialog.querySelector('[data-profile-total]').textContent=movies.length;dialog.querySelector('[data-profile-posters]').textContent=safePosters().length;dialog.querySelector('[data-profile-formats]').textContent=formats.size;dialog.querySelector('[data-profile-year]').textContent=movies.filter(movie=>movieYear(movie)===year).length};
+  const fillYearOptions=()=>{const select=dialog.querySelector('[data-top-year]'),years=[...new Set(safeMovies().map(movieYear).filter(year=>/^\d{4}$/.test(year)))].sort((a,b)=>b.localeCompare(a)),current=String(new Date().getFullYear());select.replaceChildren();(years.length?years:[current]).forEach(year=>{const option=document.createElement('option');option.value=year;option.textContent=year;select.append(option)});if(years.includes(current))select.value=current;fillMovieOptions()};
+  const fillMovieOptions=()=>{const year=dialog.querySelector('[data-top-year]').value,available=safeMovies().map((movie,index)=>({movie,index})).filter(item=>movieYear(item.movie)===year).sort((left,right)=>(Number(right.movie.rating)||0)-(Number(left.movie.rating)||0)||dateValue(right.movie)-dateValue(left.movie));topSelects().forEach((select,rank)=>{const previous=select.value;select.replaceChildren();if(!available.length){const option=document.createElement('option');option.value='-1';option.textContent='ยังไม่มีหนังในปีนี้';select.append(option);select.disabled=true}else{select.disabled=false;available.forEach(({movie,index})=>{const option=document.createElement('option');option.value=String(index);option.textContent=`${movie.title||'ไม่ระบุชื่อ'} • ${movie.format||'ไม่ระบุระบบ'}`;select.append(option)});if(available.some(item=>String(item.index)===previous))select.value=previous;else select.value=String((available[rank]||available[0]).index)}loadBackdropsForRank(rank)});draw()};
+  const setType=type=>{activeType=type;dialog.querySelectorAll('[data-story-type]').forEach(button=>{const active=button.dataset.storyType===type;button.classList.toggle('is-active',active);button.setAttribute('aria-selected',String(active))});dialog.querySelectorAll('[data-story-panel]').forEach(panel=>panel.classList.toggle('is-active',panel.dataset.storyPanel===type));status.textContent='';draw()};
+  const setStatus=(message,success=false)=>{status.textContent=message;status.classList.toggle('is-success',success)};
+  const fileName=()=>activeType==='top3'?`termnang-top3-${dialog.querySelector('[data-top-year]').value||'movies'}.png`:'termnang-movie-profile.png';
+  const storyBlob=()=>new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('สร้างภาพไม่สำเร็จ')),'image/png',1));
+  const download=async(showMessage=true)=>{try{const blob=await storyBlob(),url=URL.createObjectURL(blob),link=document.createElement('a');link.href=url;link.download=fileName();document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);if(showMessage)setStatus('ดาวน์โหลดภาพเรียบร้อยแล้ว',true)}catch(error){setStatus('ไม่สามารถสร้างภาพได้ กรุณาลองอีกครั้ง')}};
+  const share=async()=>{try{const blob=await storyBlob(),file=new File([blob],fileName(),{type:'image/png'});if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){await navigator.share({title:'TermNang Movie Story',text:'สรุปการดูหนังของฉันจาก TermNang',files:[file]});setStatus('เปิดเมนูแชร์ให้แล้ว',true)}else{await download(false);setStatus('อุปกรณ์นี้แชร์ไฟล์ตรงไม่ได้ จึงดาวน์โหลดภาพให้แล้ว',true)}}catch(error){if(error?.name!=='AbortError')setStatus('แชร์ไม่สำเร็จ กรุณาดาวน์โหลดภาพแทน')}};
+
+  document.addEventListener('click',event=>{if(!event.target.closest('[data-open-story-share]'))return;refreshSummary();fillProfileMovies();fillYearOptions();setType('profile');dialog.showModal();requestAnimationFrame(()=>{document.fonts?.ready?.then(draw);draw();dialog.querySelector('.share-story-close')?.focus()})});
+  dialog.querySelectorAll('[data-story-type]').forEach(button=>button.addEventListener('click',()=>setType(button.dataset.storyType)));
+  dialog.querySelector('[data-profile-movie-input]').addEventListener('input',()=>{clearTimeout(profileInputTimer);profileInputTimer=setTimeout(chooseProfileMovieFromInput,320)});dialog.querySelector('[data-profile-movie-input]').addEventListener('change',chooseProfileMovieFromInput);
+  dialog.querySelector('[data-top-year]').addEventListener('change',fillMovieOptions);topSelects().forEach((select,rank)=>select.addEventListener('change',()=>loadBackdropsForRank(rank)));
+  dialog.querySelector('[data-download-story]').addEventListener('click',()=>download());dialog.querySelector('[data-share-story]').addEventListener('click',share);dialog.querySelector('.share-story-close').addEventListener('click',()=>dialog.close());
+  let backdropPress=false;dialog.addEventListener('pointerdown',event=>{backdropPress=event.target===dialog});dialog.addEventListener('click',event=>{if(backdropPress&&event.target===dialog)dialog.close();backdropPress=false});dialog.addEventListener('pointercancel',()=>{backdropPress=false});
+})();
+</script>
 <script>
 /* Close entry dialogs when the user clicks their dimmed backdrop. */
 (()=>{
@@ -276,9 +430,12 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
 }
 .ticket-home .body{display:none!important}
 .ticket-home .tmdb-poster,.ticket-home .tmdb-backdrop{display:none!important}
+.hero.ticket-home .tmdb-backdrop{transition:opacity .34s ease,filter .34s ease!important}
+.hero.ticket-home .tmdb-backdrop.is-changing{opacity:.16!important;filter:saturate(.65) blur(3px)!important}
 .ticket-home .nav{max-width:1240px;margin:0 auto}
 .ticket-home .nav button{border:0;border-radius:12px;padding:11px 15px;background:#fff;color:#111;box-shadow:0 8px 24px #0008;font:700 12px Prompt,sans-serif;cursor:pointer;transition:background .18s,color .18s}
 .ticket-home .nav button:hover{background:#ff5a1f;color:#fff}
+.ticket-home .nav .ticket-nav-actions button{min-height:44px;border-radius:12px}.ticket-home .nav .ticket-share-open{background:#ff5a1f;color:#fff}.ticket-home .nav .ticket-share-open:hover{background:#fff;color:#111}
 .ticket-home-content{position:relative;z-index:2;max-width:1240px;margin:52px auto 0}
 .ticket-home-top{display:flex;align-items:end;justify-content:space-between;gap:24px;margin-bottom:22px}
 .ticket-home-kicker{position:relative;z-index:1;margin:0 0 14px;color:#ff6a35;font-size:11px;font-weight:700;line-height:1.3;letter-spacing:.16em}
@@ -338,7 +495,7 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
     const art=movie.tmdbPoster||movie.poster||movie.tmdbBackdrop||'';
     const artMarkup=art?`<img src="${escapeTicketText(art)}" alt="โปสเตอร์ ${title}">`:`<div class="ticket-art-fallback">${title}</div>`;
     const stars='★'.repeat(Math.max(0,Math.min(5,Number(movie.rating)||0)))+'☆'.repeat(Math.max(0,5-(Number(movie.rating)||0)));
-    return `<article class="movie-ticket" aria-label="ตั๋วหนัง ${title}">
+    return `<article class="movie-ticket" data-ticket-index="${index}" aria-label="ตั๋วหนัง ${title}">
       <div class="ticket-art">${artMarkup}</div>
       <div class="ticket-title"><h2 title="${title}">${title}</h2>${movie.hasPoster==='yes'?'<p>ได้รับโปสเตอร์แล้ว</p>':''}</div>
       <div class="ticket-seam" aria-hidden="true"></div>
@@ -371,6 +528,24 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
       const rail=content.querySelector('#ticketRail');
       rail?.scrollBy({left:(button.dataset.ticketScroll==='next'?1:-1)*(rail.clientWidth*.84),behavior:'smooth'});
     }));
+    const rail=content.querySelector('#ticketRail'),cardEls=[...content.querySelectorAll('.movie-ticket')];
+    let activeBackdropIndex=-1,scrollFrame=0;
+    const updateTicketBackdrop=()=>{
+      scrollFrame=0;if(!rail||!cardEls.length)return;
+      const paddingLeft=parseFloat(getComputedStyle(rail).paddingLeft)||0,target=rail.scrollLeft+paddingLeft;
+      const active=cardEls.reduce((closest,card)=>Math.abs(card.offsetLeft-target)<Math.abs(closest.offsetLeft-target)?card:closest,cardEls[0]);
+      const index=Number(active.dataset.ticketIndex);if(!Number.isInteger(index)||index===activeBackdropIndex)return;activeBackdropIndex=index;
+      const movie=movies[index],image=movie?.tmdbBackdrop||movie?.tmdbPoster||movie?.poster||'',hero=document.querySelector('.hero.ticket-home');if(!hero)return;
+      let scene=hero.querySelector('.tmdb-backdrop');if(!scene){scene=document.createElement('div');scene.className='tmdb-backdrop';hero.prepend(scene)}
+      cardEls.forEach(card=>card.classList.toggle('is-active',card===active));
+      if(!image){scene.style.backgroundImage='';hero.classList.remove('has-tmdb-poster');return}
+      hero.classList.add('has-tmdb-poster');clearTimeout(hero._ticketBackdropTimer);
+      const backgroundValue=`url("${image.replace(/"/g,'')}")`;
+      if(!scene.style.backgroundImage){scene.style.backgroundImage=backgroundValue;scene.style.setProperty('--fallback-backdrop',backgroundValue);return}
+      scene.classList.add('is-changing');hero._ticketBackdropTimer=setTimeout(()=>{scene.style.backgroundImage=backgroundValue;scene.style.setProperty('--fallback-backdrop',backgroundValue);scene.classList.remove('is-changing')},120);
+    };
+    rail?.addEventListener('scroll',()=>{if(!scrollFrame)scrollFrame=requestAnimationFrame(updateTicketBackdrop)},{passive:true});
+    updateTicketBackdrop();
   };
   const renderBeforeTickets=r;
   r=function(){renderBeforeTickets();renderTicketHome();};
@@ -849,14 +1024,14 @@ try{
   position:absolute!important;
   inset:0!important;
   z-index:0!important;
-  opacity:.48!important;
+  opacity:.58!important;
   background-position:center!important;
   background-size:cover!important;
   background-repeat:no-repeat!important;
   pointer-events:none!important;
 }
 .hero.ticket-home.has-tmdb-poster .tmdb-backdrop:after{
-  background:linear-gradient(90deg,#080808e8 0%,#080808ad 42%,#08080875 100%),linear-gradient(0deg,#080808e8 0%,transparent 58%,#08080894 100%)!important;
+  background:linear-gradient(90deg,#080808d2 0%,#08080896 42%,#0808085c 100%),linear-gradient(0deg,#080808d5 0%,transparent 58%,#0808087c 100%)!important;
 }
 /* Keep the old standalone poster out of the background; posters belong on tickets. */
 .hero.ticket-home.has-tmdb-poster .tmdb-poster{display:none!important;visibility:hidden!important;opacity:0!important}
@@ -1221,4 +1396,15 @@ body.has-film-sidebar{background:#080808!important;color:#fff}
   dialog.addEventListener('click',event=>{if(backdropPress&&event.target===dialog)dialog.close();backdropPress=false});
   dialog.addEventListener('pointercancel',()=>{backdropPress=false});
 })();
+</script>
+<style>
+/* Compact story export actions with consistently sized line icons. */
+#shareStoryDialog .share-story-actions{display:flex!important;grid-template-columns:none!important;justify-content:flex-end!important;gap:8px!important;margin-top:12px!important}
+#shareStoryDialog .share-story-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;gap:7px!important;min-width:132px!important;min-height:42px!important;height:42px!important;padding:8px 13px!important;border-radius:12px!important;font-size:11px!important;line-height:1!important}
+#shareStoryDialog .share-story-action svg{display:block!important;flex:0 0 17px!important;width:17px!important;height:17px!important;min-width:17px!important;max-width:17px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
+@media(max-width:760px){#shareStoryDialog .share-story-actions{justify-content:center!important;margin:11px -14px -14px!important;padding:8px 14px 12px!important}#shareStoryDialog .share-story-action{flex:0 1 134px!important;min-width:0!important;height:40px!important;min-height:40px!important;padding:7px 9px!important}}
+</style>
+<script>
+/* Add the missing download glyph; the share glyph is already supplied by the dialog. */
+(()=>{const button=document.querySelector('#shareStoryDialog [data-download-story]');if(button&&!button.querySelector('svg'))button.insertAdjacentHTML('afterbegin','<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0 4-4m-4 4-4-4"/><path d="M5 18v3h14v-3"/></svg>')})();
 </script>
