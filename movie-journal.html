@@ -120,7 +120,7 @@
   const drawBrand=(section)=>{ctx.fillStyle=ORANGE;ctx.font=font(800,30);ctx.letterSpacing='5px';ctx.fillText('TERMNANG',82,102);ctx.letterSpacing='0px';ctx.fillStyle=MUTED;ctx.font=font(600,22);ctx.textAlign='right';ctx.fillText(section,998,102);ctx.textAlign='left';line(82,136,998,136)};
   const drawFooter=()=>{line(82,1784,998,1784);ctx.fillStyle=WHITE;ctx.font=font(700,24);ctx.fillText('เติมหนังให้วันธรรมดา กลายเป็นวันที่น่าจดจำ',82,1840);ctx.fillStyle=MUTED;ctx.font=font(500,18);ctx.textAlign='right';ctx.fillText('TermNang • Movie Journal',998,1840);ctx.textAlign='left'};
   const drawBackground=()=>{ctx.clearRect(0,0,STORY_W,STORY_H);ctx.fillStyle=BLACK;ctx.fillRect(0,0,STORY_W,STORY_H);ctx.save();ctx.globalAlpha=.12;ctx.fillStyle=ORANGE;ctx.beginPath();ctx.arc(1000,90,400,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.06;ctx.beginPath();ctx.arc(-20,1570,520,0,Math.PI*2);ctx.fill();ctx.restore()};
-  const drawTop3Background=()=>{ctx.clearRect(0,0,STORY_W,STORY_H);const base=ctx.createLinearGradient(0,0,STORY_W,STORY_H);base.addColorStop(0,'#020202');base.addColorStop(.48,'#0c0806');base.addColorStop(1,'#1a0903');ctx.fillStyle=base;ctx.fillRect(0,0,STORY_W,STORY_H);ctx.save();ctx.filter='blur(105px)';ctx.globalAlpha=.72;ctx.fillStyle='#ff5a20';ctx.beginPath();ctx.arc(1060,100,330,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.34;ctx.beginPath();ctx.arc(-80,920,360,0,Math.PI*2);ctx.fill();ctx.globalAlpha=.42;ctx.beginPath();ctx.arc(1000,1810,390,0,Math.PI*2);ctx.fill();ctx.restore();const vignette=ctx.createRadialGradient(STORY_W/2,STORY_H/2,240,STORY_W/2,STORY_H/2,1040);vignette.addColorStop(0,'rgba(0,0,0,.02)');vignette.addColorStop(1,'rgba(0,0,0,.7)');ctx.fillStyle=vignette;ctx.fillRect(0,0,STORY_W,STORY_H)};
+  const drawTop3Background=()=>{ctx.clearRect(0,0,STORY_W,STORY_H);const base=ctx.createLinearGradient(0,0,STORY_W,STORY_H);base.addColorStop(0,'#020202');base.addColorStop(.48,'#0c0806');base.addColorStop(1,'#1a0903');ctx.fillStyle=base;ctx.fillRect(0,0,STORY_W,STORY_H);const softGlow=(cx,cy,r,alpha)=>{const glow=ctx.createRadialGradient(cx,cy,0,cx,cy,r);glow.addColorStop(0,`rgba(255,90,32,${alpha})`);glow.addColorStop(.28,`rgba(255,90,32,${alpha*.72})`);glow.addColorStop(.62,`rgba(255,90,32,${alpha*.28})`);glow.addColorStop(1,'rgba(255,90,32,0)');ctx.fillStyle=glow;ctx.fillRect(cx-r,cy-r,r*2,r*2)};softGlow(1060,100,470,.56);softGlow(-80,920,510,.27);softGlow(1000,1810,550,.34);const vignette=ctx.createRadialGradient(STORY_W/2,STORY_H/2,240,STORY_W/2,STORY_H/2,1040);vignette.addColorStop(0,'rgba(0,0,0,.02)');vignette.addColorStop(1,'rgba(0,0,0,.7)');ctx.fillStyle=vignette;ctx.fillRect(0,0,STORY_W,STORY_H)};
   const formatCounts=()=>{const map=new Map();safeMovies().forEach(movie=>{const name=cleanText(movie.format)||'ไม่ระบุ';map.set(name,(map.get(name)||0)+1)});return [...map.entries()].sort((left,right)=>right[1]-left[1])};
   const selectedProfileMovie=()=>safeMovies()[profileMovieIndex]||latestMovie()||null;
   const profileTicketId=movie=>{const match=String(movie?.date||'').match(/^(\d{4})-(\d{2})-(\d{2})$/),dateCode=match?`${match[3]}${match[2]}${match[1]}`:'NO-DATE',ordered=[...safeMovies()].sort((left,right)=>dateValue(left)-dateValue(right)),ordinal=Math.max(1,ordered.indexOf(movie)+1);return `FLM-${dateCode}-${String(ordinal).padStart(3,'0')}`};
@@ -444,9 +444,9 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
 .ticket-summary{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0 26px}
 .ticket-summary span{font-size:11px;color:#aaa}.ticket-summary b{color:#fff;font-size:17px;margin-right:5px}
 .ticket-rail-wrap{position:relative}
-.ticket-rail{display:flex;gap:24px;overflow-x:auto;padding:4px 4px 22px;scroll-snap-type:x mandatory;scroll-padding-left:4px;scrollbar-width:thin;scrollbar-color:#ff5a1f66 transparent}
+.ticket-rail{display:flex;gap:24px;overflow-x:auto;padding:4px 4px 22px;scroll-snap-type:x mandatory;scroll-padding-left:4px;scrollbar-width:thin;scrollbar-color:#ff5a1f66 transparent;-webkit-overflow-scrolling:touch;overscroll-behavior-inline:contain}
 .ticket-rail::-webkit-scrollbar{height:7px}.ticket-rail::-webkit-scrollbar-thumb{background:#ff5a1f88;border-radius:99px}
-.movie-ticket{position:relative;flex:0 0 clamp(300px,29vw,380px);min-height:640px;overflow:hidden;scroll-snap-align:start;border-radius:22px;background:#f8f7f3;color:#121212;box-shadow:0 22px 50px #0009}
+.movie-ticket{position:relative;flex:0 0 clamp(300px,29vw,380px);min-height:640px;overflow:hidden;scroll-snap-align:start;scroll-snap-stop:always;border-radius:22px;background:#f8f7f3;color:#121212;box-shadow:0 22px 50px #0009}
 .ticket-art{height:315px;position:relative;overflow:hidden;background:linear-gradient(150deg,#292929,#0c0c0c)}
 .ticket-art img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.86) contrast(1.04)}
 .ticket-art:after{content:'';position:absolute;inset:auto 0 0;height:54%;background:linear-gradient(transparent,#f8f7f3 96%)}
@@ -469,7 +469,7 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
   .ticket-home-content{margin-top:35px}
   .ticket-home-top{display:block;margin-bottom:20px}.ticket-home-title{padding-top:2px;font-size:clamp(32px,9.2vw,40px);letter-spacing:-.01em;line-height:1.1}.ticket-home-copy{text-align:left;margin-top:12px;font-size:12px}
   .ticket-summary{gap:13px;margin:17px 0 19px}
-  .ticket-rail{--ticket-peek:clamp(30px,9.75vw,42px);gap:14px;margin:0 -18px;padding:4px var(--ticket-peek) 20px;scroll-padding-inline:var(--ticket-peek);scroll-snap-type:x mandatory}
+  .ticket-rail{--ticket-peek:clamp(30px,9.75vw,42px);gap:14px;margin:0 -18px;padding:4px var(--ticket-peek) 20px;scroll-padding-inline:var(--ticket-peek);scroll-snap-type:x mandatory;scroll-behavior:smooth}
   .movie-ticket{flex-basis:max(260px,calc(100vw - 76px));min-height:618px;border-radius:20px;scroll-snap-align:center}
   .ticket-art{height:294px}.ticket-title{padding-left:23px;padding-right:23px}.ticket-title h2{font-size:23px}.ticket-info{padding:19px 23px 22px;gap:17px}.ticket-scroll-buttons{display:none}
 }
@@ -524,16 +524,24 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
     const posterCount=Array.isArray(posterData)?posterData.length:0;
     content.innerHTML=`<div class="ticket-home-top"><div><p class="ticket-home-kicker">MY MOVIE TICKETS</p><h1 class="ticket-home-title">ตั๋วหนังของฉัน</h1></div><p class="ticket-home-copy">เลื่อนเพื่อเปิดดูตั๋วของหนังทุกเรื่องที่คุณเคยบันทึกไว้</p></div><div class="ticket-summary"><span><b>${movies.length}</b> ตั๋วทั้งหมด</span><span><b>${movies.filter(movie=>(movie.date||'').startsWith(String(new Date().getFullYear()))).length}</b> เรื่องที่ดูปีนี้</span><span><b>${posterCount}</b> โปสเตอร์</span></div><div class="ticket-rail-wrap"><div class="ticket-scroll-buttons" aria-label="เลื่อนตั๋ว"><button type="button" data-ticket-scroll="prev" aria-label="ตั๋วก่อนหน้า">←</button><button type="button" data-ticket-scroll="next" aria-label="ตั๋วถัดไป">→</button></div><div id="ticketRail" class="ticket-rail" aria-label="รายการตั๋วหนัง">${cards}</div></div>`;
     content.querySelector('[data-open-ticket-form]')?.addEventListener('click',()=>document.querySelector('#d')?.showModal());
-    content.querySelectorAll('[data-ticket-scroll]').forEach(button=>button.addEventListener('click',()=>{
-      const rail=content.querySelector('#ticketRail');
-      rail?.scrollBy({left:(button.dataset.ticketScroll==='next'?1:-1)*(rail.clientWidth*.84),behavior:'smooth'});
-    }));
     const rail=content.querySelector('#ticketRail'),cardEls=[...content.querySelectorAll('.movie-ticket')];
-    let activeBackdropIndex=-1,scrollFrame=0;
+    let activeBackdropIndex=-1,scrollFrame=0,snapTimer=0;
+    const closestTicket=()=>{
+      if(!rail||!cardEls.length)return null;
+      const railRect=rail.getBoundingClientRect(),mobile=matchMedia('(max-width:650px)').matches,paddingLeft=parseFloat(getComputedStyle(rail).paddingLeft)||0,focusX=mobile?railRect.left+railRect.width/2:railRect.left+paddingLeft;
+      const distanceFromFocus=card=>{const rect=card.getBoundingClientRect();return Math.abs((mobile?rect.left+rect.width/2:rect.left)-focusX)};
+      return cardEls.reduce((closest,card)=>distanceFromFocus(card)<distanceFromFocus(closest)?card:closest,cardEls[0]);
+    };
+    const centerTicket=(card,behavior='smooth')=>{
+      if(!rail||!card)return;
+      const railRect=rail.getBoundingClientRect(),cardRect=card.getBoundingClientRect(),delta=cardRect.left+cardRect.width/2-(railRect.left+railRect.width/2);
+      if(Math.abs(delta)>1)rail.scrollTo({left:rail.scrollLeft+delta,behavior});
+    };
+    const settleTicket=()=>{if(matchMedia('(max-width:650px)').matches)centerTicket(closestTicket())};
+    content.querySelectorAll('[data-ticket-scroll]').forEach(button=>button.addEventListener('click',()=>{const current=closestTicket(),index=Math.max(0,cardEls.indexOf(current)),step=button.dataset.ticketScroll==='next'?1:-1;centerTicket(cardEls[Math.max(0,Math.min(cardEls.length-1,index+step))])}));
     const updateTicketBackdrop=()=>{
       scrollFrame=0;if(!rail||!cardEls.length)return;
-      const paddingLeft=parseFloat(getComputedStyle(rail).paddingLeft)||0,target=rail.scrollLeft+paddingLeft;
-      const active=cardEls.reduce((closest,card)=>Math.abs(card.offsetLeft-target)<Math.abs(closest.offsetLeft-target)?card:closest,cardEls[0]);
+      const active=closestTicket();
       const index=Number(active.dataset.ticketIndex);if(!Number.isInteger(index)||index===activeBackdropIndex)return;activeBackdropIndex=index;
       const movie=movies[index],image=movie?.tmdbBackdrop||movie?.tmdbPoster||movie?.poster||'',hero=document.querySelector('.hero.ticket-home');if(!hero)return;
       let scene=hero.querySelector('.tmdb-backdrop');if(!scene){scene=document.createElement('div');scene.className='tmdb-backdrop';hero.prepend(scene)}
@@ -544,7 +552,9 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
       if(!scene.style.backgroundImage){scene.style.backgroundImage=backgroundValue;scene.style.setProperty('--fallback-backdrop',backgroundValue);return}
       scene.classList.add('is-changing');hero._ticketBackdropTimer=setTimeout(()=>{scene.style.backgroundImage=backgroundValue;scene.style.setProperty('--fallback-backdrop',backgroundValue);scene.classList.remove('is-changing')},120);
     };
-    rail?.addEventListener('scroll',()=>{if(!scrollFrame)scrollFrame=requestAnimationFrame(updateTicketBackdrop)},{passive:true});
+    rail?.addEventListener('scroll',()=>{if(!scrollFrame)scrollFrame=requestAnimationFrame(updateTicketBackdrop);if(matchMedia('(max-width:650px)').matches){clearTimeout(snapTimer);snapTimer=setTimeout(settleTicket,150)}},{passive:true});
+    rail?.addEventListener('touchend',()=>{clearTimeout(snapTimer);snapTimer=setTimeout(settleTicket,90)},{passive:true});
+    rail?.addEventListener('pointerup',event=>{if(event.pointerType==='touch'){clearTimeout(snapTimer);snapTimer=setTimeout(settleTicket,90)}},{passive:true});
     updateTicketBackdrop();
   };
   const renderBeforeTickets=r;
@@ -1402,7 +1412,8 @@ body.has-film-sidebar{background:#080808!important;color:#fff}
 #shareStoryDialog .share-story-actions{display:flex!important;grid-template-columns:none!important;justify-content:flex-end!important;gap:8px!important;margin-top:12px!important}
 #shareStoryDialog .share-story-action{display:inline-flex!important;align-items:center!important;justify-content:center!important;flex:0 0 auto!important;gap:7px!important;min-width:132px!important;min-height:42px!important;height:42px!important;padding:8px 13px!important;border-radius:12px!important;font-size:11px!important;line-height:1!important}
 #shareStoryDialog .share-story-action svg{display:block!important;flex:0 0 17px!important;width:17px!important;height:17px!important;min-width:17px!important;max-width:17px!important;fill:none!important;stroke:currentColor!important;stroke-width:2!important;stroke-linecap:round!important;stroke-linejoin:round!important}
-@media(max-width:760px){#shareStoryDialog .share-story-actions{justify-content:center!important;margin:11px -14px -14px!important;padding:8px 14px 12px!important}#shareStoryDialog .share-story-action{flex:0 1 134px!important;min-width:0!important;height:40px!important;min-height:40px!important;padding:7px 9px!important}}
+#shareStoryDialog [data-story-panel="top3"] .share-story-field select{display:block!important;width:100%!important;height:50px!important;min-height:50px!important;margin:0!important;padding:0 44px 0 14px!important;border:1px solid #ffffff32!important;border-radius:13px!important;background-color:#181818!important;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23bdbdbd' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 10 5 5 5-5'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 14px center!important;background-size:14px 14px!important;color:#fff!important;font:500 13px Prompt,sans-serif!important;line-height:normal!important;-webkit-appearance:none!important;appearance:none!important;box-sizing:border-box!important}
+@media(max-width:760px){#shareStoryDialog .share-story-actions{justify-content:center!important;margin:11px -14px -14px!important;padding:8px 14px 12px!important}#shareStoryDialog .share-story-action{flex:0 1 134px!important;min-width:0!important;height:40px!important;min-height:40px!important;padding:7px 9px!important}#shareStoryDialog [data-story-panel="top3"] .share-story-field select{height:52px!important;min-height:52px!important;padding-left:15px!important;font-size:14px!important}#shareStoryDialog [data-story-panel="top3"] .share-story-rank>strong{height:52px!important}}
 </style>
 <script>
 /* Add the missing download glyph; the share glyph is already supplied by the dialog. */
