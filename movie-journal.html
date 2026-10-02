@@ -534,7 +534,10 @@ document.querySelector('#historyClose').onclick=()=>document.querySelector('#his
     };
     const centerTicket=(card,behavior='smooth')=>{
       if(!rail||!card)return;
-      const railRect=rail.getBoundingClientRect(),cardRect=card.getBoundingClientRect(),delta=cardRect.left+cardRect.width/2-(railRect.left+railRect.width/2);
+      const railRect=rail.getBoundingClientRect(),cardRect=card.getBoundingClientRect(),mobile=matchMedia('(max-width:650px)').matches,paddingLeft=parseFloat(getComputedStyle(rail).paddingLeft)||0;
+      const cardFocus=mobile?cardRect.left+cardRect.width/2:cardRect.left;
+      const railFocus=mobile?railRect.left+railRect.width/2:railRect.left+paddingLeft;
+      const delta=cardFocus-railFocus;
       if(Math.abs(delta)>1)rail.scrollTo({left:rail.scrollLeft+delta,behavior});
     };
     const settleTicket=()=>{if(matchMedia('(max-width:650px)').matches)centerTicket(closestTicket())};
