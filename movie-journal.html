@@ -142,6 +142,7 @@ h1{font-size:clamp(38px,5vw,62px);font-weight:700;letter-spacing:-.01em;line-hei
 .rt{grid-area:1/2;min-width:0}
 .rt b{display:block;font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 8px rgba(0,0,0,.45)}
 .rt small{color:#d0d0d0;font-size:12px;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.rmeta{display:none}
 .rf{grid-area:1/3}
 .rd{grid-area:1/4}
 .rf,.rd{font-size:13px;color:#d6d6d6}
@@ -247,6 +248,10 @@ dialog.dday{width:min(520px,94vw)}
 .calanim.dirL .cell,.calanim.dirR .cell,.calanim.dirL .mrow,.calanim.dirR .mrow{animation:none}
 @media (prefers-reduced-motion:reduce){.calanim *{animation:none!important}}
 
+.syncstat{font-size:13px;color:var(--muted)}
+.syncstat.ok{color:#7ddc9a}
+.syncstat.bad{color:#ffb199}
+
 /* ---------- settings ---------- */
 .card{background:var(--glass);border:1px solid var(--line);border-radius:18px;padding:22px;max-width:640px;margin-bottom:16px;backdrop-filter:blur(8px)}
 .card h3{font-size:17px;font-weight:600;margin-bottom:6px}
@@ -277,9 +282,17 @@ dialog[open]{animation:pop .25s}
 label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
 .lbl{display:block;margin-bottom:6px}
 .dform input,.dform select{font:inherit;font-size:15px;color:#fff;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:12px;padding:11px 14px;outline:none;width:100%;text-transform:none;letter-spacing:0}
+/* iOS/Safari: native date/time/select controls ignore width unless their appearance is reset */
+.dform input,.dform select{-webkit-appearance:none;appearance:none;box-sizing:border-box;min-width:0;max-width:100%;width:100%;height:46px;margin:0;display:block}
+.dform input[type=date],.dform input[type=time]{text-align:left;line-height:normal;position:relative}
+.dform input[type=date]::-webkit-date-and-time-value,.dform input[type=time]::-webkit-date-and-time-value{text-align:left;margin:0;min-width:0}
+.dform input[type=date]::-webkit-datetime-edit,.dform input[type=time]::-webkit-datetime-edit{padding:0;min-width:0}
+.dform input[type=date]::-webkit-calendar-picker-indicator,.dform input[type=time]::-webkit-calendar-picker-indicator{opacity:.7}
+.dform select{padding-right:38px;background:rgba(255,255,255,.07) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23bbb' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center}
+dialog:focus,dialog:focus-visible{outline:none}
 .dform input:focus,.dform select:focus{border-color:var(--accent)}
 .dform select option{color:#000}
-.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
 .suggest{display:grid;gap:8px;max-height:230px;overflow:auto}
 .suggest:empty{display:none}
 .sg{display:flex;gap:12px;align-items:center;background:rgba(255,255,255,.06);border-radius:12px;padding:8px;border:1px solid transparent;text-align:left}
@@ -324,8 +337,29 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
   .topbar{margin-bottom:14px}
   .herorow{margin-bottom:6px}
   .rail{margin:0 -16px}
+  .tkp{aspect-ratio:2/1.85}
+  .tkb{padding:4px 14px 14px}
+  .perf{margin:12px -14px}
+  .info{gap:6px}
+  .info b{font-size:13px;white-space:nowrap}
+  .tk .stars{font-size:16px}
+  /* dialogs: single column, nothing wider than the screen */
+  dialog[open].wide{grid-template-columns:minmax(0,1fr)}
+  .dform{padding:22px 18px 18px;min-width:0}
+  .dform>*,.row2>*,.pickbox>*{min-width:0}
+  .dform input,.dform select{min-width:0;max-width:100%}
+  .row2{gap:10px}
+  .star-input{flex-wrap:wrap;gap:6px 10px}
+  .star-input .stars{font-size:26px}
+  .score{white-space:nowrap}
+  .formacts{flex-wrap:wrap}
   .row{grid-template-columns:44px minmax(0,1fr) 60px;gap:10px}
   .rf,.rd,.row>.stars{display:none}
+  .rt small:empty{display:none}
+  .rmeta{display:flex;flex-direction:column;gap:3px;margin-top:3px;font-size:12px;color:#d6d6d6}
+  .rmeta span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rmeta .stars{font-size:13px;letter-spacing:1px}
+  .rmeta .stars .bg{color:rgba(255,255,255,.22)}
   .rdel{grid-area:1/3}
   .cell{min-height:70px;padding:5px}
   .cthumbs img,.mini{width:22px;height:32px}
@@ -403,11 +437,6 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
         <option value="rate-desc">Top rated</option>
         <option value="title">Title A–Z</option>
       </select>
-      <select id="fPoster">
-        <option value="">Poster: all</option>
-        <option value="yes">Collected</option>
-        <option value="no">Not yet</option>
-      </select>
     </div>
     <div class="rows" id="rows"></div>
   </section>
@@ -450,8 +479,16 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
     <p class="eyebrow">SETTINGS</p>
     <h2 class="ptitle">ตั้งค่า</h2>
     <div class="card">
+      <h3>ซิงก์ข้อมูล</h3>
+      <p>ข้อมูลทั้งหมดบันทึกบนคลาวด์ (Supabase) เปิดจากเครื่องไหนก็เห็นข้อมูลชุดเดียวกัน บันทึกแล้วซิงก์ให้อัตโนมัติ</p>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+        <button class="btn ghost" id="btnSync">ซิงก์ตอนนี้</button>
+        <span class="syncstat" id="syncStat">กำลังเชื่อมต่อ…</span>
+      </div>
+    </div>
+    <div class="card">
       <h3>สำรอง / นำเข้าข้อมูล</h3>
-      <p>ข้อมูลเก็บในเบราว์เซอร์เครื่องนี้ ควรสำรองเป็นไฟล์ไว้เป็นระยะ และใช้นำเข้าเมื่อเปลี่ยนเครื่อง</p>
+      <p>ไฟล์สำรองไว้เก็บเอง นำเข้าแล้วจะเพิ่มหรืออัปเดตรายการตาม id โดยไม่ลบของที่มีอยู่</p>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <button class="btn ghost" id="btnExport">สำรองข้อมูล</button>
         <button class="btn ghost" id="btnImport">นำเข้าข้อมูล</button>
@@ -562,12 +599,13 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
 (() => {
   const $ = s => document.querySelector(s);
   const $$ = s => [...document.querySelectorAll(s)];
-  const STORE = 'termnang.tickets.v1', PSTORE = 'termnang.posters.v1', KEY = 'termnang.tmdb';
+  const STORE = 'termnang.tickets.v2', PSTORE = 'termnang.posters.v2', KEY = 'termnang.tmdb';   // local copy of the cloud data (v1 = old format, no longer read)
   const FORMATS = ['Digital 2D', '3D', 'IMAX', 'IMAX 3D', '4DX', 'ScreenX', 'Dolby Atmos', 'Premium / Gold Class', 'อื่น ๆ'];
   const MAIN_FORMATS = ['Digital 2D', 'IMAX', 'ScreenX', '4DX', 'Dolby Atmos'];
   const readList = k => { try { const v = JSON.parse(localStorage.getItem(k)); return Array.isArray(v) ? v : []; } catch { return []; } };
   let tickets = readList(STORE), posters = readList(PSTORE);
-  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(tickets)); localStorage.setItem(PSTORE, JSON.stringify(posters)); } catch {} };
+  let syncHook = null;
+  const save = () => { try { localStorage.setItem(STORE, JSON.stringify(tickets)); localStorage.setItem(PSTORE, JSON.stringify(posters)); } catch {} if (syncHook) syncHook(); };
   const DEFAULT_KEY = '5f290fddbe46b3517c024d444e4eb3bb';
   const getKey = () => DEFAULT_KEY;   // fixed TMDB key, no settings needed
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -794,13 +832,12 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
   }
 
   function renderList() {
-    const fp = $('#fPoster').value;
-    const list = tickets.filter(t => matches(t) && (!fp || (fp === 'yes') === !!t.gotPoster)).sort(cmp[sort]);
+    const list = tickets.filter(matches).sort(cmp[sort]);
     $('#rows').innerHTML = list.length ? list.map((t, i) => `
       <div class="row" data-id="${t.id}" style="animation-delay:${Math.min(i,14)*30}ms">
         ${t.poster ? `<div class="rbg"><i style="background-image:${attrUrl(t.poster)}"></i></div>` : ''}
         ${t.poster ? img(t.poster, 'th') : '<div class="th"></div>'}
-        <div class="rt"><b>${esc(t.title)}</b><small>${esc(t.original && t.original !== t.title ? t.original : '')}</small></div>
+        <div class="rt"><b>${esc(t.title)}</b><small>${esc(t.original && t.original !== t.title ? t.original : '')}</small><div class="rmeta"><span>${esc(t.format)} · ${esc(fmtDate(t.date))} · ${esc(t.time)}</span>${starsHTML(t.rating)}</div></div>
         <span class="rf">${esc(t.format)}</span>
         <span class="rd">${esc(fmtDate(t.date))} · ${esc(t.time)}</span>
         ${starsHTML(t.rating)}
@@ -957,7 +994,6 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
   $$('.q').forEach(el => el.addEventListener('input', e => { q = e.target.value.trim().toLowerCase(); $$('.q').forEach(o => { if (o !== el) o.value = e.target.value; }); render(); }));
   $$('.sort').forEach(el => el.addEventListener('input', e => { sort = e.target.value; $$('.sort').forEach(o => { o.value = sort; }); render(); }));
   $('#psort').addEventListener('input', e => { psort = e.target.value; renderPosters(); });
-  $('#fPoster').addEventListener('input', render);
 
   /* ---------- TMDB ---------- */
   async function tmdb(path) {
@@ -1229,12 +1265,106 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
       const d = JSON.parse(await f.text());
       const ts = Array.isArray(d) ? d : d.tickets;                       // old backups are a plain list of tickets
       if (!Array.isArray(ts)) throw 0;
-      tickets = ts.map(t => ({ ...t, id: t.id || uid(), rating: +t.rating || 0 }));
-      posters = Array.isArray(d.posters) ? d.posters.map(p => ({ ...p, id: p.id || uid() })) : [];
+      // merge by id: never deletes what is already there (the data is shared across devices)
+      ts.map(t => ({ ...t, id: t.id || uid(), rating: Math.ceil(+t.rating || 0) })).forEach(t => { const i = tickets.findIndex(x => x.id === t.id); if (i >= 0) tickets[i] = t; else tickets.push(t); });
+      if (Array.isArray(d.posters)) d.posters.map(p => ({ ...p, id: p.id || uid() })).forEach(p => { const i = posters.findIndex(x => x.id === p.id); if (i >= 0) posters[i] = p; else posters.push(p); });
       migrate(); save(); bdUrl = null; render();
     } catch { alert('ไฟล์ไม่ถูกต้อง'); }
     e.target.value = '';
   });
+
+
+  /* ---------- cloud sync (Supabase project "film-log": tables movie_records / poster_records) ---------- */
+  const SB = 'https://dspzpbttwpszoummbaja.supabase.co/rest/v1';
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRzcHpwYnR0d3Bzem91bW1iYWphIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg3NzUzMjIsImV4cCI6MjEwNDM1MTMyMn0.TAKIyzcM2PIRmdOjZ3Tm9ofFS8-qypw_oO7VqSSlXb8';
+  const SB_H = { apikey: SB_KEY, Authorization: 'Bearer ' + SB_KEY, 'Content-Type': 'application/json' };
+  const SYNCED = 'termnang.synced.v2';
+  const tmdbSize = (u, from, to) => String(u || '').replace('/t/p/' + from + '/', '/t/p/' + to + '/');
+  const normFormat = f => /atmos/i.test(f || '') ? 'Dolby Atmos' : (f || 'Digital 2D');
+  const linkedPoster = id => posters.find(p => p.ticketId === id);
+  const ticketRow = t => ({ id: t.id, payload: {
+    title: t.title, original: t.original || '', tmdbId: t.tmdbId || null, date: t.date, showtime: t.time || '', format: t.format, rating: String(t.rating || 0),
+    hasPoster: t.gotPoster ? 'yes' : 'no', posterId: (linkedPoster(t.id) || {}).id || '', posterFormat: '', remoteId: t.id,
+    tmdbPoster: t.poster || '', tmdbBackdrop: t.backdrop || '', posterImage: t.collected || '' } });
+  const posterRow = p => ({ id: p.id, payload: {
+    title: p.title, original: p.original || '', tmdbId: p.tmdbId || null, date: p.date || '', format: p.format, source: p.ticketId ? 'movie' : 'manual',
+    ticketId: p.ticketId || '', posterId: '', remoteId: p.id, posterImage: p.image || '' } });
+  const rowTicket = r => { const x = r.payload || {}; return {
+    id: r.id, title: x.title || '', original: x.original || '', tmdbId: x.tmdbId || null, date: x.date || '', time: x.showtime || '19:00',
+    format: normFormat(x.format), rating: Math.ceil(+x.rating || 0), gotPoster: x.hasPoster === 'yes',
+    poster: tmdbSize(x.tmdbPoster, 'original', 'w500'), backdrop: tmdbSize(x.tmdbBackdrop, 'original', 'w1280'),
+    collected: tmdbSize(x.posterImage, 'w342', 'w500') }; };
+  const rowPoster = (r, ts) => { const x = r.payload || {};
+    let tid = x.ticketId || '';
+    if (!tid && x.source === 'movie') { const m = ts.find(t => t.title === x.title && t.date === x.date && t.gotPoster); tid = m ? m.id : ''; }
+    const o = { id: r.id, title: x.title || '', original: x.original || '', tmdbId: x.tmdbId || null, date: x.date || '', format: normFormat(x.format), image: tmdbSize(x.posterImage, 'w342', 'w500') };
+    if (tid) o.ticketId = tid; return o; };
+
+  let snapT = {}, snapP = {}, syncedOnce = false, pushTimer = 0, pushing = false, dirty = false;
+  const setStat = (txt, cls) => { const e = $('#syncStat'); if (e) { e.textContent = txt; e.className = 'syncstat ' + (cls || ''); } };
+  const sb = async (path, opt = {}) => {
+    const r = await fetch(SB + path, { ...opt, headers: { ...SB_H, ...(opt.headers || {}) } });
+    if (!r.ok) throw new Error(path + ' ' + r.status);
+    return opt.method && opt.method !== 'GET' ? null : r.json();
+  };
+  const readSynced = () => { try { return new Set(JSON.parse(localStorage.getItem(SYNCED)) || []); } catch { return new Set(); } };
+
+  async function pull() {
+    if (dirty || pushing) return false;                           // never overwrite edits that are still waiting to be sent
+    const [mr, pr] = await Promise.all([sb('/movie_records?select=id,payload&order=created_at.asc&limit=5000'), sb('/poster_records?select=id,payload&order=created_at.asc&limit=5000')]);
+    if (dirty || pushing) return false;
+    const cT = mr.map(rowTicket), cP = pr.map(r => rowPoster(r, cT));
+    const known = readSynced(), cloudIds = new Set([...mr, ...pr].map(r => r.id));
+    // items that exist only on this device and were never in the cloud = created offline -> keep and upload
+    const newT = tickets.filter(t => !cloudIds.has(t.id) && !known.has(t.id));
+    const newP = posters.filter(p => !cloudIds.has(p.id) && !known.has(p.id));
+    const before = JSON.stringify([tickets, posters]);
+    tickets = cT.concat(newT); posters = cP.concat(newP);
+    snapT = {}; snapP = {};
+    cT.forEach(t => snapT[t.id] = JSON.stringify(ticketRow(t))); cP.forEach(p => snapP[p.id] = JSON.stringify(posterRow(p)));
+    try { localStorage.setItem(SYNCED, JSON.stringify([...cloudIds])); } catch {}
+    syncedOnce = true;
+    const changed = before !== JSON.stringify([tickets, posters]);
+    if (changed) { try { localStorage.setItem(STORE, JSON.stringify(tickets)); localStorage.setItem(PSTORE, JSON.stringify(posters)); } catch {} }
+    if (newT.length || newP.length) schedulePush();
+    return changed;
+  }
+  function schedulePush() { dirty = true; clearTimeout(pushTimer); pushTimer = setTimeout(push, 500); setStat('รอซิงก์…'); }
+  async function push() {
+    if (!syncedOnce) { try { await pull(); } catch { return retryPush(); } }
+    if (pushing) return;
+    pushing = true;
+    try {
+      const wantT = {}, wantP = {};
+      tickets.forEach(t => wantT[t.id] = ticketRow(t)); posters.forEach(p => wantP[p.id] = posterRow(p));
+      const upT = Object.values(wantT).filter(r => snapT[r.id] !== JSON.stringify(r)), upP = Object.values(wantP).filter(r => snapP[r.id] !== JSON.stringify(r));
+      const delT = Object.keys(snapT).filter(id => !wantT[id]), delP = Object.keys(snapP).filter(id => !wantP[id]);
+      // safety net: a bug or a bad import must not be able to wipe the shared data
+      if (delT.length > Math.max(3, Object.keys(snapT).length * .2) || delP.length > Math.max(3, Object.keys(snapP).length * .2)) {
+        setStat('หยุดซิงก์: ตรวจพบการลบจำนวนมากผิดปกติ ไม่ได้ส่งขึ้นคลาวด์', 'bad'); dirty = false; pushing = false; return;
+      }
+      const up = (tbl, rows) => rows.length ? sb(`/${tbl}?on_conflict=id`, { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }, body: JSON.stringify(rows) }) : null;
+      const del = (tbl, ids) => ids.length ? sb(`/${tbl}?id=in.(${ids.map(i => '"' + i + '"').join(',')})`, { method: 'DELETE' }) : null;
+      await Promise.all([up('movie_records', upT), up('poster_records', upP), del('movie_records', delT), del('poster_records', delP)]);
+      upT.forEach(r => snapT[r.id] = JSON.stringify(r)); upP.forEach(r => snapP[r.id] = JSON.stringify(r));
+      delT.forEach(id => delete snapT[id]); delP.forEach(id => delete snapP[id]);
+      try { localStorage.setItem(SYNCED, JSON.stringify([...Object.keys(snapT), ...Object.keys(snapP)])); } catch {}
+      dirty = false; pushing = false;
+      setStat('ซิงก์แล้ว · ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }), 'ok');
+    } catch (e) { pushing = false; retryPush(); }
+  }
+  function retryPush() { setStat('ออฟไลน์ — เก็บไว้ในเครื่องก่อน จะส่งขึ้นคลาวด์เมื่อต่อเน็ตได้', 'bad'); clearTimeout(pushTimer); pushTimer = setTimeout(push, 15000); }
+  async function syncNow(quiet) {
+    try {
+      if (dirty) { await push(); } 
+      else { setStat('กำลังซิงก์…'); const ch = await pull(); if (ch) { bdUrl = null; render(); } setStat('ซิงก์แล้ว · ' + new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }), 'ok'); }
+    } catch { if (!quiet || !syncedOnce) setStat('เชื่อมต่อคลาวด์ไม่ได้ — ใช้ข้อมูลที่เก็บในเครื่อง', 'bad'); }
+  }
+  syncHook = schedulePush;
+  $('#btnSync').onclick = () => syncNow(false);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) syncNow(true); });
+  window.addEventListener('online', () => syncNow(true));
+  setInterval(() => { if (!document.hidden) syncNow(true); }, 45000);
 
   $('#ddClose').onclick = () => $('#ddlg').close();
   $('#ddList').addEventListener('click', e => {
@@ -1243,6 +1373,7 @@ label,.lbl{display:grid;gap:6px;font-size:11.5px;color:var(--muted);letter-spaci
     if (t) { $('#ddlg').close(); openForm(t); }
   });
   route();
+  syncNow(false);
 })();
 </script>
 </body>
