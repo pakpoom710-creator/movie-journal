@@ -358,7 +358,7 @@ dialog:focus,dialog:focus-visible{outline:none}
   .rt small:empty{display:none}
   .rmeta{display:flex;flex-direction:column;gap:3px;margin-top:3px;font-size:12px;color:#d6d6d6}
   .rmeta span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rmeta .stars{font-size:13px;letter-spacing:1px}
+  .rmeta .stars{font-size:13px;letter-spacing:1px;align-self:flex-start;width:max-content}
   .rmeta .stars .bg{color:rgba(255,255,255,.22)}
   .rdel{grid-area:1/3}
   .cell{min-height:70px;padding:5px}
@@ -546,10 +546,10 @@ dialog:focus,dialog:focus-visible{outline:none}
     <div class="pickbox" id="pickBox" hidden>
       <span class="lbl">เลือกโปสเตอร์ที่ได้รับ</span>
       <div class="pstrip" id="pstrip"></div>
-      <label id="linkBox" hidden>ลิงก์รูปโปสเตอร์ที่ได้รับ
-        <input id="fLink" placeholder="https://…">
-      </label>
       <p class="hint" id="pickHint"></p>
+      <label>หรือวางลิงก์รูปโปสเตอร์ที่ได้รับเอง
+        <input id="fLink" type="url" inputmode="url" autocomplete="off" placeholder="https://…">
+      </label>
     </div>
     <div class="formacts">
       <button type="button" class="btn danger" id="btnDel" hidden>ลบตั๋ว</button>
@@ -581,11 +581,11 @@ dialog:focus,dialog:focus-visible{outline:none}
     <div class="pickbox" id="pPickBox" hidden>
       <span class="lbl">เลือกลายโปสเตอร์</span>
       <div class="pstrip" id="pStrip"></div>
-      <label id="pLinkBox" hidden>ลิงก์รูปโปสเตอร์
-        <input id="pLink" placeholder="https://…">
-      </label>
       <p class="hint" id="pPickHint"></p>
     </div>
+    <label>หรือวางลิงก์รูปโปสเตอร์เอง
+      <input id="pLink" type="url" inputmode="url" autocomplete="off" placeholder="https://…">
+    </label>
     <div class="formacts">
       <button type="button" class="btn danger" id="pDel" hidden>ลบโปสเตอร์</button>
       <span class="sp"></span>
@@ -1103,14 +1103,18 @@ dialog:focus,dialog:focus-visible{outline:none}
     setRating(Math.max(1, Math.ceil(pct * 5)));
   });
   const ticketPicker = makePicker(
-    { strip: $('#pstrip'), linkBox: $('#linkBox'), link: $('#fLink'), hint: $('#pickHint') },
-    () => draft, () => draft.collected, v => { draft.collected = v; },
+    { strip: $('#pstrip'), linkBox: document.createElement('div'), link: document.createElement('input'), hint: $('#pickHint') },
+    () => draft, () => draft.collected, v => { draft.collected = v; if (document.activeElement !== $('#fLink')) $('#fLink').value = v || ''; },
     'ยังไม่ได้ตั้งค่า TMDB — จะใช้โปสเตอร์เดียวกับตั๋ว หรือวางลิงก์รูปโปสเตอร์ที่ได้รับเองก็ได้');
+  $('#fLink').addEventListener('input', e => {
+    draft.collected = e.target.value.trim();
+    [...$('#pstrip').querySelectorAll('button')].forEach(b => b.classList.remove('on'));
+  });
   function setGot(v) {
     draft.gotPoster = v;
     $$('#gotSeg button').forEach(b => b.classList.toggle('on', (b.dataset.v === '1') === v));
     $('#pickBox').hidden = !v;
-    if (v) { if (!draft.collected) draft.collected = draft.poster || ''; ticketPicker.refresh(); }
+    if (v) { if (!draft.collected) draft.collected = draft.poster || ''; $('#fLink').value = draft.collected || ''; ticketPicker.refresh(); }
     preview();
   }
   $('#gotSeg').addEventListener('click', e => { const b = e.target.closest('button'); if (b) setGot(b.dataset.v === '1'); });
@@ -1178,9 +1182,16 @@ dialog:focus,dialog:focus-visible{outline:none}
   function ppreview() {
     $('#ppv').innerHTML = pd.image ? `<img src="${esc(pd.image)}" alt="">` : 'ยังไม่ได้เลือกโปสเตอร์';
     $('#ppvbg').style.backgroundImage = pd.image ? cssUrl(pd.image) : 'none';
+    if (document.activeElement !== $('#pLink')) $('#pLink').value = pd.image || '';
   }
+  $('#pLink').addEventListener('input', e => {
+    pd.image = e.target.value.trim();
+    $('#ppv').innerHTML = pd.image ? `<img src="${esc(pd.image)}" alt="">` : 'ยังไม่ได้เลือกโปสเตอร์';
+    $('#ppvbg').style.backgroundImage = pd.image ? cssUrl(pd.image) : 'none';
+    [...$('#pStrip').querySelectorAll('button')].forEach(b => b.classList.remove('on'));
+  });
   const posterPicker = makePicker(
-    { strip: $('#pStrip'), linkBox: $('#pLinkBox'), link: $('#pLink'), hint: $('#pPickHint') },
+    { strip: $('#pStrip'), linkBox: document.createElement('div'), link: document.createElement('input'), hint: $('#pPickHint') },
     () => pd, () => pd.image, v => { pd.image = v; ppreview(); },
     'ยังไม่ได้ตั้งค่า TMDB — วางลิงก์รูปโปสเตอร์เอง หรือไปที่เมนู ตั้งค่า เพื่อเชื่อมต่อ');
   $('#pTitle').addEventListener('input', e => {
@@ -1222,7 +1233,7 @@ dialog:focus,dialog:focus-visible{outline:none}
   $('#pDel').onclick = () => { if (deletePoster(pEditing)) $('#pdlg').close(); };
   $('#pform').addEventListener('submit', e => {
     const image = (pd.image || '').trim();
-    if (!image) { e.preventDefault(); alert(pd.tmdbId ? 'กรุณาเลือกลายโปสเตอร์' : 'กรุณาพิมพ์ชื่อหนังแล้วเลือกจากรายการก่อน'); return; }
+    if (!image) { e.preventDefault(); alert(pd.tmdbId ? 'กรุณาเลือกลายโปสเตอร์ หรือวางลิงก์รูป' : 'กรุณาเลือกหนังจากรายการ หรือวางลิงก์รูปโปสเตอร์'); return; }
     const old = pEditing ? posters.find(p => p.id === pEditing) : null;
     const entry = { ...(old || {}), id: pEditing || uid(), title: $('#pTitle').value.trim(), original: pd.original || '', tmdbId: pd.tmdbId || null, date: $('#pDate').value, format: $('#pFormat').value, image };
     if (old) posters = posters.map(p => p.id === pEditing ? entry : p); else posters.push(entry);
